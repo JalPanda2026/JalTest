@@ -26282,10 +26282,12 @@ function _buildAndDownloadWord(){
       children:[new TextRun({text:today()+'  ·  pococksanders.co.uk',font:FONT,size:18,color:MED_GREY})]}));
 
     // ── Risk profile explanatory section ──
-    allChildren.push(bigHead('Risk profile',32,true));
+    const sp=(before)=>new Paragraph({spacing:{before:before},children:[]});
+    allChildren.push(bigHead('Risk profile',34,true));
     allChildren.push(bodyPara('This section explains how we reached an agreed risk level for this goal, taking account of your natural attitude to risk, capacity for loss and the return required to meet your objective. Your natural risk level, from the attitude to risk questionnaire, is the starting point for that discussion.'));
     allChildren.push(bodyPara('In our discussion you were shown a projection based initially on your natural risk level, investment amount, target and time horizon. We then adjusted the relevant factors, including the risk level, until the right balance was reached, giving an agreed risk level for the investment.'));
     allChildren.push(bodyPara('Each risk level maps to a collection of asset classes chosen to give an appropriate level of risk. Projections are produced by passing that asset class breakdown to a stochastic engine using modelling provided by Hymans Robertson. A portfolio will then be built to meet your agreed risk level, summarised below.'));
+    allChildren.push(sp(700));
 
     // ── Natural / Agreed risk level ──
     const gradeBox=(lvl)=>new Table({
@@ -26294,10 +26296,10 @@ function _buildAndDownloadWord(){
       rows:[new TableRow({children:[new TableCell({
         width:{size:2600,type:WidthType.DXA},
         verticalAlign:VerticalAlign.CENTER,
-        margins:{top:300,bottom:300,left:120,right:120},
+        margins:{top:380,bottom:380,left:120,right:120},
         children:[
-          new Paragraph({alignment:AlignmentType.CENTER,spacing:{after:120},children:[new TextRun({text:String(lvl),font:FONT,size:48,bold:true,color:PS_PURPLE})]}),
-          new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:PROFILES[lvl].name,font:FONT,size:24,bold:true,color:PS_PURPLE})]})
+          new Paragraph({alignment:AlignmentType.CENTER,spacing:{after:120},children:[new TextRun({text:String(lvl),font:FONT,size:56,bold:true,color:PS_PURPLE})]}),
+          new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:PROFILES[lvl].name,font:FONT,size:26,bold:true,color:PS_PURPLE})]})
         ]
       })]})]
     });
@@ -26316,11 +26318,12 @@ function _buildAndDownloadWord(){
       const natLvl=ans===12?scoreToLevel(Object.values(pp.atr).reduce((a,b)=>a+b.pts,0)):5;
       const agrLvl=pp.agreed||natLvl;
       const c=[];
-      c.push(bigHead('Natural risk level',28));
+      c.push(bigHead('Natural risk level',30));
       c.push(bodyPara('Your natural risk level is based on the answers given in the Attitude to Risk Questionnaire completed on '+today()+'. The full responses are in the appendix.'));
       c.push(new Paragraph({spacing:{after:120},children:[new TextRun({text:cName.toUpperCase(),font:FONT,size:20,bold:true,color:PS_PURPLE})]}));
       c.push(riskLevelRow(natLvl));
-      c.push(bigHead('Agreed risk level',28));
+      c.push(sp(700));
+      c.push(bigHead('Agreed risk level',30));
       c.push(bodyPara('Following an interactive discussion, and considering your natural attitude to risk, capacity for loss and required return for your goal, we agreed a risk level.'));
       c.push(riskLevelRow(agrLvl));
       return c;
@@ -26345,6 +26348,7 @@ function _buildAndDownloadWord(){
       allChildren.push(bodyPara('The following reflects your agreed risk level. Speak to your adviser if any statement does not reflect the risk you are willing and able to take.'));
       allChildren.push(new Table({width:{size:9800,type:WidthType.DXA},columnWidths:[4900,4900],borders:noBorders,
         rows:[new TableRow({children:[defCell('As a '+PROFILES[gL].name+' investor:',E.self),defCell('You may also be suited to this approach if you:',E.suited)]})]}));
+      allChildren.push(sp(300));
       // Typical asset allocation (donut) beside the potential-outcome figures
       const outLine=(l,v)=>new Paragraph({spacing:{after:50},children:[new TextRun({text:l+':  ',font:FONT,size:18,bold:true,color:PS_PURPLE}),new TextRun({text:v,font:FONT,size:18,bold:true,color:DARK_GREY})]});
       allChildren.push(new Table({width:{size:9800,type:WidthType.DXA},columnWidths:[4700,5100],borders:noBorders,
@@ -26361,7 +26365,7 @@ function _buildAndDownloadWord(){
             outLine('Total contributions',money(ENGAGE_EX.init))
           ]})
         ]})]}));
-      allChildren.push(new Paragraph({spacing:{before:80,after:20},children:[new TextRun({text:'Illustrative projection — '+money(ENGAGE_EX.init)+' invested over '+ENGAGE_EX.years+' years, '+ENGAGE_EX.charge+'% annual charge, in real terms',font:FONT,size:18,bold:true,color:PS_PURPLE})]}));
+      allChildren.push(new Paragraph({spacing:{before:240,after:20},children:[new TextRun({text:'Illustrative projection — '+money(ENGAGE_EX.init)+' invested over '+ENGAGE_EX.years+' years, '+ENGAGE_EX.charge+'% annual charge, in real terms',font:FONT,size:18,bold:true,color:PS_PURPLE})]}));
       allChildren.push(new Paragraph({spacing:{after:20},children:[new ImageRun({data:engageProjBytes(gL),transformation:{width:648,height:286},type:'png'})]}));
       allChildren.push(new Paragraph({children:[new TextRun({text:'A standard Defaqto Engage illustration showing how outcomes vary with risk level; not a projection of your own portfolio. The orange line is the most likely outcome, with a 10% chance of the result falling outside the range. Not a guarantee of actual performance.',font:FONT,size:16,italics:true,color:MED_GREY})]}));
     })();

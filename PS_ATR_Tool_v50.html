@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pocock Sanders — ATR Tool v47 Desktop 01072026</title>
+<title>Pocock Sanders — ATR Tool v50 Desktop 03092026</title>
 <style>
 :root{
   /* PS Brand */
@@ -24218,7 +24218,7 @@ function loadH2P(cb){
 
   <div class="lftr">
     <span>Pocock Sanders · 111–113 High Street, Berkhamsted HP4 2JF · 01442 876333</span>
-    <span>pococksanders.co.uk · <strong>v47</strong></span>
+    <span>pococksanders.co.uk · <strong>v50</strong></span>
   </div>
 </div>
 
@@ -24596,7 +24596,7 @@ function downloadManual(){
   for(let i=0;i<b.length;i++)arr[i]=b.charCodeAt(i);
   const blob=new Blob([arr],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download='PS_ATR_Tool_v47_User_Guide.docx';
+  a.download='PS_ATR_Tool_v50_User_Guide.docx';
   document.body.appendChild(a);a.click();
   setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(a.href);},1000);
 }
@@ -25790,7 +25790,7 @@ function buildNotesAndBandingPage(pageNum,totalPages){
         <div class="print-footer" style="margin-top:6pt">
           <img class="pf-logo pi-logo" alt="PS" style="width:16pt;height:16pt;object-fit:cover;border-radius:2pt;flex-shrink:0">
           <img class="pf-dq pi-dq" alt="defaqto" style="height:11pt;opacity:.7;flex-shrink:0">
-          <span>Pocock Sanders &nbsp;·&nbsp; FCA 530924 &nbsp;·&nbsp; Adviser use only — not for distribution to clients &nbsp;·&nbsp; v47 · 01 July 2026</span>
+          <span>Pocock Sanders &nbsp;·&nbsp; FCA 530924 &nbsp;·&nbsp; Adviser use only — not for distribution to clients &nbsp;·&nbsp; v50 · 3 September 2026</span>
         </div>
       </div>
     </div>`;}
@@ -26563,7 +26563,7 @@ function printPage(){
       '</div>'+
     '</div>'+
     '<div style="margin-top:8pt;padding:4pt 8pt;background:#EDE6F5;border-radius:4pt;font-size:6.5pt;color:#666;text-align:center">'+
-      'Pocock Sanders · FCA 530924 · Defaqto Engage · v47 · 01 July 2026 · Printed '+today()+' — Assessment in progress, not a final report'+
+      'Pocock Sanders · FCA 530924 · Defaqto Engage · v50 · 3 September 2026 · Printed '+today()+' — Assessment in progress, not a final report'+
     '</div>'+
     '</div>'+
   '</div>';

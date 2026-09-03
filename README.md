@@ -5,7 +5,7 @@ branded, printable planning report. It runs entirely in the browser. There is no
 build step and no external data storage, so nothing that is typed into it leaves the machine
 it is opened on.
 
-Current file: `Pocock_Sanders_IHT_Calculator.html` (calculator version 16.21).
+Current file: `Pocock_Sanders_IHT_Calculator.html` (calculator version 16.22).
 
 ## Running it
 
@@ -35,6 +35,33 @@ Rules and thresholds reflected in the current version:
 | BPR and APR | 100% relief on the first £2.5m of combined qualifying property per person, 50% above that, since 6 April 2026 |
 | AIM-listed shares | 50% relief only since 6 April 2026, and outside the £2.5m allowance |
 | Unused pension funds | Inside the estate from 6 April 2027 |
+
+### The £2m taper test
+
+The taper threshold is tested against the value of the death estate, not against the gross
+estate figure shown to the client. The two differ, and the difference changes the answer:
+
+- Assets genuinely outside the estate do not count. Pension funds are excluded until
+  6 April 2027, and value already settled into trust or gifted away and survived is excluded
+  throughout.
+- Reliefs are ignored, so Business Relief and Agricultural Relief property counts at full
+  value even though it is relieved out of the taxable estate.
+
+The practical consequence is worth drawing out with clients. A Business Relief investment
+cannot restore a Residence Nil Rate Band that the taper has withdrawn, because the relieved
+property still counts towards the threshold. A gift into trust can, because that value leaves
+the estate. For an estate sitting between £2m and £2.35m, that distinction is worth up to
+£140,000 of tax and is modelled separately for each scenario.
+
+## Tests
+
+`node tests/test_engine.js`
+
+There is no browser in the way of this. The test harness lifts the script block out of the
+HTML and runs it against a minimal DOM stub, then drives the real functions directly, so the
+tests exercise shipped code rather than a copy of it. Coverage is the taper mechanics, the
+BPR and APR allowance bands, the per-scenario taper bases, the funding-source warnings and
+the reconciliation of the client report table to the tax figure it prints.
 
 ## Modelling assumptions
 

@@ -1245,7 +1245,7 @@ footer a{color:var(--purple)}
 </div>
 
 <footer>Pocock Sanders Independent Financial Advisers &nbsp;&bull;&nbsp; 111&ndash;113 High Street, Berkhamsted HP4 2JF &nbsp;&bull;&nbsp; <a href="https://pococksanders.co.uk">pococksanders.co.uk</a> &nbsp;&bull;&nbsp; 01442 876333 &nbsp;&bull;&nbsp; FCA 530924
-  <div style="margin-top:6px;opacity:.6">Calculator version 16.21 &nbsp;&bull;&nbsp; Last updated 14 August 2026</div>
+  <div style="margin-top:6px;opacity:.6">Calculator version 16.22 &nbsp;&bull;&nbsp; Last updated 3 September 2026</div>
 </footer>
 
 <!-- TAPER INFO MODAL -->
@@ -1406,11 +1406,20 @@ function selectSolution(sol){
 }
 
 // ══════════════════════════════ CORE CALC ══════════════════════════════
-function calcRNRB(gross, nc, on){
-  if(!on) return {av:0, taper:0, tapered:gross>2000000, max:nc*175000};
+// The £2m RNRB taper test runs on the value of the death estate itself (s8D IHTA 1984),
+// which is NOT the same as the "Gross Estate" figure shown to the client:
+//   - Assets genuinely outside the estate do not count. That means pension funds before
+//     6 April 2027, existing DGT/trust value, and anything gifted away and survived.
+//   - Reliefs and exemptions are ignored, so BPR/APR-qualifying property DOES still count
+//     at full value even though it is relieved out of the taxable estate.
+// This last point is the reason a BPR investment cannot restore a tapered RNRB but a gift
+// into trust can, so each scenario has to be given its own taper base rather than sharing
+// one figure derived from the gross estate.
+function calcRNRB(taperBase, nc, on){
+  if(!on) return {av:0, taper:0, tapered:taperBase>2000000, max:nc*175000, base:taperBase};
   var mx=nc*175000;
-  var taper=Math.max(0,(gross-2000000)/2);
-  return {av:Math.max(0,mx-taper), taper:taper, tapered:gross>2000000, max:mx};
+  var taper=Math.max(0,(taperBase-2000000)/2);
+  return {av:Math.max(0,mx-taper), taper:taper, tapered:taperBase>2000000, max:mx, base:taperBase};
 }
 function calcIHT(net,nrb,rnrb,gifts){
   var eff=Math.max(0,nrb-gifts);
@@ -1449,20 +1458,27 @@ function refresh(){
   var gross=res+prop+pen+inv+a_bpr+cash+oth+eDGT+isa+bond+chattels;
   var liquid=inv+a_bpr+cash+oth+isa+bond;
 
-  var rnrb=calcRNRB(gross, nc, rnrbOn);
+  // Taper bases per scenario — see calcRNRB above for why these differ from gross estate.
+  // Existing DGT/trust value is outside the estate in every scenario. Pension funds are
+  // outside it only until 5 April 2027.
+  var taperBasePre  = Math.max(0, gross - eDGT - pen);
+  var taperBasePost = Math.max(0, gross - eDGT);
+  var rnrbPre  = calcRNRB(taperBasePre,  nc, rnrbOn);
+  var rnrbPost = calcRNRB(taperBasePost, nc, rnrbOn);
+  var rnrb = rnrbPre; // Step 1 and the "today" tables report the current-rules position
 
   var bprBandsPre=bprAprBands(a_bpr, 0, nc);
 
   // Pre-budget
   var pre_outside=pen+bprBandsPre.relieved+eDGT;
   var pre_net=gross-pre_outside;
-  var pre_i=calcIHT(pre_net, nrb, rnrb.av, gifts);
+  var pre_i=calcIHT(pre_net, nrb, rnrbPre.av, gifts);
   var pre_final=gross-pre_i.iht+la;
 
   // Post-budget
   var post_outside=bprBandsPre.relieved+eDGT;
   var post_net=gross-post_outside;
-  var post_i=calcIHT(post_net, nrb, rnrb.av, gifts);
+  var post_i=calcIHT(post_net, nrb, rnrbPost.av, gifts);
   var post_final=gross-post_i.iht+la;
   var xtra=post_i.iht-pre_i.iht;
 
@@ -1475,7 +1491,12 @@ function refresh(){
   var bprBandsDgt=bprAprBands(a_bpr, 0, nc);
   var dgt_outside=bprBandsDgt.relieved+eDGT+da;
   var dgt_net=gross-dgt_outside;
-  var dgt_i=calcIHT(dgt_net, nrb, rnrb.av, gifts);
+  // Money settled into the DGT leaves the estate, so it also leaves the taper base and can
+  // restore RNRB that the £2m taper had withdrawn. Modelled on the same survival assumption
+  // the rest of the DGT figures already use. Scenario is post-6 April 2027, so pensions are in.
+  var taperBaseDgt = Math.max(0, gross - eDGT - da);
+  var rnrbDgt = calcRNRB(taperBaseDgt, nc, rnrbOn);
+  var dgt_i=calcIHT(dgt_net, nrb, rnrbDgt.av, gifts);
   var dgt_unprot=Math.max(0,dgt_i.iht-dws-la);
   var dgt_saving=post_i.iht-dgt_i.iht;
 
@@ -1495,16 +1516,26 @@ function refresh(){
     ? (bprBandsPort.relieved+eDGT+da+(b_aim*b_aim_relief_rate))
     : (bprBandsPort.relieved+eDGT+(b_aim*b_aim_relief_rate));
   var port_net=gross-port_outside;
-  var port_i=calcIHT(port_net, nrb, rnrb.av, gifts);
+  // BPR and AIM holdings are relieved, not removed, so they stay in the taper base at full
+  // value and cannot restore a tapered RNRB. Only the DGT element (when the solutions are
+  // combined) actually leaves the estate.
+  var taperBasePort = Math.max(0, gross - eDGT - (combineSolutions ? da : 0));
+  var rnrbPort = calcRNRB(taperBasePort, nc, rnrbOn);
+  var port_i=calcIHT(port_net, nrb, rnrbPort.av, gifts);
   var port_unprot = combineSolutions ? Math.max(0,port_i.iht-dws-bws-la) : Math.max(0,port_i.iht-bws-la);
   var port_saving=post_i.iht-port_i.iht;
 
   _last={res:res,prop:prop,pen:pen,inv:inv,a_bpr:a_bpr,cash:cash,oth:oth,la:la,gifts:gifts,eDGT:eDGT,isa:isa,bond:bond,chattels:chattels,
-    nc:nc,nrb:nrb,gross:gross,liquid:liquid,rnrb:rnrb,pre_i:pre_i,pre_final:pre_final,post_i:post_i,post_final:post_final,xtra:xtra,
+    nc:nc,nrb:nrb,gross:gross,liquid:liquid,rnrb:rnrb,rnrbPre:rnrbPre,rnrbPost:rnrbPost,rnrbDgt:rnrbDgt,rnrbPort:rnrbPort,
+    pre_i:pre_i,pre_final:pre_final,post_i:post_i,post_final:post_final,xtra:xtra,
     da:da,dws:dws,dwa:dwa,day1:day1,incA:incA,netI:netI,dgt_i:dgt_i,dgt_unprot:dgt_unprot,dgt_saving:dgt_saving,dgt_net:dgt_net,dgt_outside:dgt_outside,
     ba:ba,b_bpr:b_bpr,b_aim:b_aim,ba_relief:ba_relief,bws:bws,port_i:port_i,port_unprot:port_unprot,port_saving:port_saving,port_net:port_net,port_outside:port_outside,
     bprBandsPort:bprBandsPort};
-  window._lastRNRB=rnrb; window._lastGross=gross; window._lastNC=nc;
+  // The taper modal explains whichever scenario the adviser is currently looking at.
+  var modalRnrb = curStep<=2 ? rnrbPre
+                : (curStep===3 ? rnrbPost
+                : (curSolution==='dgt' ? rnrbDgt : rnrbPort));
+  window._lastRNRB=modalRnrb; window._lastGross=modalRnrb.base; window._lastNC=nc;
 
   // ── Step 1: live "how the top figures are calculated" table ──
   sv('s1_res', fmt(res)); sv('s1_prop', fmt(prop)); sv('s1_pen', fmt(pen));
@@ -1548,21 +1579,29 @@ function refresh(){
     setText('s1_rnrb_note', 'Not applicable \u2014 main residence not left to direct descendants');
     shtml('s1_2m_warning','');
     shtml('s1_rnrb_calc','');
-  } else if(gross<=2000000){
+  } else if(taperBasePre<=2000000){
     setText('s1_rnrb_note', (nc===2?'2 people \u00d7 \u00a3175,000':'1 person \u00d7 \u00a3175,000')+' \u2014 full amount, no taper');
     shtml('s1_2m_warning','');
     shtml('s1_rnrb_calc','');
   } else {
-    var overBy = gross-2000000;
+    var overBy = taperBasePre-2000000;
+    var baseDiffers = (taperBasePre < gross - 0.5);
+    var baseLabel = baseDiffers ? 'Estate counted for the taper test' : 'Gross estate';
+    var baseWorking = baseDiffers
+      ? ('Gross estate '+fmt(gross)+' &minus; '+(pen>0?'pension funds '+fmt(pen)+' (outside the estate until 6 April 2027)':'')+
+         (pen>0&&eDGT>0?' &minus; ':'')+(eDGT>0?'existing DGT/trust value '+fmt(eDGT)+' (already outside the estate)':'')+
+         ' = '+fmt(taperBasePre)+' counted for the test.<br>')
+      : '';
     setText('s1_rnrb_note', rnrb.av<=0?'Fully tapered away \u2014 see calculation below':'Reduced by tapering \u2014 see calculation below');
     shtml('s1_2m_warning',
       '<div class="al warn" style="margin-top:0;margin-bottom:16px"><strong>Estate has crossed the \u00a32,000,000 threshold.</strong> '+
-      'Gross estate is '+fmt(gross)+', which is '+fmt(overBy)+' over the RNRB taper threshold. This starts reducing the Residential Nil Rate Band '+
+      baseLabel+' is '+fmt(taperBasePre)+', which is '+fmt(overBy)+' over the RNRB taper threshold. This starts reducing the Residential Nil Rate Band '+
       '&mdash; see the calculation below for exactly why.<button type="button" class="info-i" onclick="showTaperInfo()" style="background:rgba(139,69,0,.15);color:inherit">i</button></div>');
     shtml('s1_rnrb_calc',
       '<div class="rpt-explain" style="margin-top:14px">'+
         '<b>Why RNRB '+(rnrb.av<=0?'does not apply':'is reduced')+':</b><br>'+
-        'Gross estate '+fmt(gross)+' &minus; \u00a32,000,000 taper threshold = '+fmt(overBy)+' over threshold.<br>'+
+        baseWorking+
+        baseLabel+' '+fmt(taperBasePre)+' &minus; \u00a32,000,000 taper threshold = '+fmt(overBy)+' over threshold.<br>'+
         'Taper reduction: '+fmt(overBy)+' \u00f7 2 = '+fmt(rnrb.taper)+'.<br>'+
         'Maximum RNRB ('+(nc===2?'2 \u00d7 \u00a3175,000':'\u00a3175,000')+') '+fmt(rnrb.max)+' \u2212 taper '+fmt(rnrb.taper)+' = <b>'+
         (rnrb.av<=0?'\u00a30 (fully withdrawn)':fmt(rnrb.av))+'</b>.'+
@@ -1624,7 +1663,7 @@ function refresh(){
   sv('p2c_pre_nrb', '\u2212'+fmt(effNrb));
   gi('p2c_pre_gifts_row').style.display = gifts>0 ? 'table-row' : 'none';
   if(gifts>0) sv('p2c_pre_gifts_amt', fmt(gifts));
-  sv('p2c_pre_rnrb', '\u2212'+fmt(rnrb.av));
+  sv('p2c_pre_rnrb', '\u2212'+fmt(rnrbPre.av));
   sv('p2c_pre_taxable', fmt(pre_i.liable));
   sv('p2c_pre_iht', fmt(pre_i.iht));
   p2showTr('p2c_pre_la_row', la>0); p2showTr('p2c_pre_unprot_row', la>0);
@@ -1635,18 +1674,30 @@ function refresh(){
   sv('p2c_post_nrb', '\u2212'+fmt(effNrb));
   gi('p2c_post_gifts_row').style.display = gifts>0 ? 'table-row' : 'none';
   if(gifts>0) sv('p2c_post_gifts_amt', fmt(gifts));
-  sv('p2c_post_rnrb', '\u2212'+fmt(rnrb.av));
+  sv('p2c_post_rnrb', '\u2212'+fmt(rnrbPost.av));
   sv('p2c_post_taxable', fmt(post_i.liable));
   sv('p2c_post_iht', fmt(post_i.iht));
   p2showTr('p2c_post_la_row', la>0); p2showTr('p2c_post_unprot_row', la>0);
   if(la>0){ sv('p2c_post_la', '\u2212'+fmt(la)); sv('p2c_post_unprot', fmt(Math.max(0,post_i.iht-la))); }
 
+  // Panel 3 is the post-6 April 2027 position, so its banner reports the post-2027 taper.
   var rb='';
-  if(rnrb.tapered){
-    rb+='<div class="al warn"><strong>RNRB taper applies.</strong> Gross estate exceeds \u00a32,000,000, so the Residential Nil Rate Band is reduced from '+fmt(rnrb.max)+' to '+fmt(rnrb.av)+
+  if(rnrbPost.tapered){
+    rb+='<div class="al warn"><strong>RNRB taper applies.</strong> The estate counted for the taper test ('+fmt(rnrbPost.base)+') exceeds \u00a32,000,000, so the Residential Nil Rate Band is reduced from '+fmt(rnrbPost.max)+' to '+fmt(rnrbPost.av)+
       '.<button type="button" class="info-i" onclick="showTaperInfo()" style="background:rgba(139,69,0,.15);color:inherit">i</button></div>';
   }
   shtml('rnrbBanner', rb);
+
+  // Panel 2 is the current-rules position, where pensions are still outside the estate.
+  var rb2='';
+  if(rnrbPre.tapered){
+    rb2+='<div class="al warn"><strong>RNRB taper applies.</strong> The estate counted for the taper test ('+fmt(rnrbPre.base)+') exceeds \u00a32,000,000, so the Residential Nil Rate Band is reduced from '+fmt(rnrbPre.max)+' to '+fmt(rnrbPre.av)+
+      '.<button type="button" class="info-i" onclick="showTaperInfo()" style="background:rgba(139,69,0,.15);color:inherit">i</button></div>';
+  } else if(rnrbPost.tapered && rnrbOn){
+    rb2+='<div class="al info">The full Residential Nil Rate Band of '+fmt(rnrbPre.max)+' is available today, because pension funds do not count towards the \u00a32,000,000 taper threshold until 6 April 2027. From that date the taper reduces it to '+fmt(rnrbPost.av)+
+      '.<button type="button" class="info-i" onclick="showTaperInfo()">i</button></div>';
+  }
+  shtml('rnrbBanner2', rb2);
 
   var ex='';
   if(xtra>0) ex+='<div class="al danger">From 6 April 2027, bringing pensions into the estate adds <strong>'+fmt(xtra)+'</strong> to the IHT bill \u2014 that\'s the gap the next step is about closing.</div>';
@@ -1841,7 +1892,7 @@ function renderFundingSources(prefix, fieldPrefix, needed, srcMap, priorDrawn){
   });
   if(needed>0 && Math.abs(totalDrawnOwn-needed)>0.5){
     warn+='<div class="al warn" style="margin-top:10px;font-size:13px">Sources total '+fmt(totalDrawnOwn)+', but the investment amount is '+fmt(needed)+
-      ' &mdash; '+(totalDrawn<needed?('shortfall of '+fmt(needed-totalDrawn)):('excess of '+fmt(totalDrawn-needed)))+'. Check the split adds up.</div>';
+      ' &mdash; '+(totalDrawnOwn<needed?('shortfall of '+fmt(needed-totalDrawnOwn)):('excess of '+fmt(totalDrawnOwn-needed)))+'. Check the split adds up.</div>';
   }
   shtml(prefix+'_src_warn', warn);
 }
@@ -1860,12 +1911,14 @@ function showTaperInfo(){
   if(!rnrb || !rnrbOn){
     body.innerHTML='<p>RNRB is not currently applicable (main residence is not being left to direct descendants), so no taper applies.</p>';
   } else if(!rnrb.tapered){
-    body.innerHTML='<p>The gross estate ('+fmt(gross)+') is below the &pound;2,000,000 taper threshold, so the full RNRB of '+fmt(max)+' applies with no reduction.</p>';
+    body.innerHTML='<p>The estate value counted for this test ('+fmt(gross)+') is below the &pound;2,000,000 taper threshold, so the full RNRB of '+fmt(max)+' applies with no reduction.</p>'+
+      '<p style="font-size:13.5px;color:var(--grey-m);margin-top:10px">Only assets actually inside the estate count towards the threshold. Pension funds are excluded until 6 April 2027, and value already settled into trust or gifted away and survived is excluded throughout. Business Relief and Agricultural Relief holdings do still count in full, because the test ignores reliefs.</p>';
   } else {
     body.innerHTML=
-      '<p>Where the gross estate exceeds &pound;2,000,000, the Residential Nil Rate Band is reduced by &pound;1 for every &pound;2 over that threshold, until fully withdrawn.</p>'+
+      '<p>Where the estate exceeds &pound;2,000,000, the Residential Nil Rate Band is reduced by &pound;1 for every &pound;2 over that threshold, until fully withdrawn.</p>'+
+      '<p style="font-size:13.5px;color:var(--grey-m)">Only assets actually inside the estate count. Pension funds are excluded until 6 April 2027, and value already settled into trust or gifted away and survived is excluded throughout. Business Relief and Agricultural Relief holdings still count in full, because the test ignores reliefs, which is why relief-based planning cannot restore a tapered RNRB but a gift into trust can.</p>'+
       '<div class="mstep">'+
-        '<div class="mrowline"><span>Gross estate</span><span>'+fmt(gross)+'</span></div>'+
+        '<div class="mrowline"><span>Estate value counted for the test</span><span>'+fmt(gross)+'</span></div>'+
         '<div class="mrowline"><span>Less: taper threshold</span><span>&minus;'+fmt(2000000)+'</span></div>'+
         '<div class="mrowline mtot"><span>Amount over threshold</span><span>'+fmt(gross-2000000)+'</span></div>'+
       '</div>'+
@@ -1927,7 +1980,7 @@ function buildReport(){
   var repShowTr=function(id,show){var e=gi(id); if(e) e.style.display=show?'table-row':'none';};
   repShowTr('rep_pre_c_gifts_row', d.gifts>0);
   if(d.gifts>0) sv('rep_pre_c_gifts_amt', fmt(d.gifts));
-  sv('rep_pre_c_rnrb', '\u2212'+fmt(d.rnrb.av));
+  sv('rep_pre_c_rnrb', '\u2212'+fmt(d.rnrbPre.av));
   sv('rep_pre_c_taxable', fmt(d.pre_i.liable));
   sv('rep_pre_c_iht', fmt(d.pre_i.iht));
   repShowTr('rep_pre_c_la_row', d.la>0); repShowTr('rep_pre_c_unprot_row', d.la>0);
@@ -1938,7 +1991,7 @@ function buildReport(){
   sv('rep_post_c_nrb', '\u2212'+fmt(repEffNrb));
   repShowTr('rep_post_c_gifts_row', d.gifts>0);
   if(d.gifts>0) sv('rep_post_c_gifts_amt', fmt(d.gifts));
-  sv('rep_post_c_rnrb', '\u2212'+fmt(d.rnrb.av));
+  sv('rep_post_c_rnrb', '\u2212'+fmt(d.rnrbPost.av));
   sv('rep_post_c_taxable', fmt(d.post_i.liable));
   sv('rep_post_c_iht', fmt(d.post_i.iht));
   repShowTr('rep_post_c_la_row', d.la>0); repShowTr('rep_post_c_unprot_row', d.la>0);
@@ -1957,13 +2010,15 @@ function buildReport(){
   sv('rep_saved', fmt(Math.max(0,saved)));
 
   sv('rep_table_ttl', 'How the figures are worked out \u2014 '+sol.label);
+  // Every asset that feeds the gross estate must appear here, otherwise the column does not
+  // add up to the total printed beneath it. Zero-value lines are dropped to keep the client
+  // report tight, but nothing that carries value is omitted.
   var rows='';
-  rows+=trow('Main residence', fmt(d.res));
-  rows+=trow('Investment property', fmt(d.prop));
-  rows+=trow('Pension funds', fmt(d.pen));
-  rows+=trow('Bond Funds', fmt(d.inv));
-  rows+=trow('Cash reserves', fmt(d.cash));
-  rows+=trow('Other assets', fmt(d.oth));
+  var assetRows=[['Main residence',d.res],['Investment property',d.prop],['Pension funds',d.pen],
+    ['Bond Funds',d.inv],['Cash reserves',d.cash],['ISA funds',d.isa],['Offshore Bond',d.bond],
+    ['Chattels / personal effects',d.chattels],['Existing BPR-qualifying assets',d.a_bpr],
+    ['Existing DGT / trust value',d.eDGT],['Other assets',d.oth]];
+  assetRows.forEach(function(r){ if(r[1]>0) rows+=trow(r[0], fmt(r[1])); });
   rows+=trow('Total (Gross Estate)', fmt(d.gross), '', 'total');
   var invested = curSolution==='dgt' ? d.da : d.ba_relief;
   if(curSolution==='port' && d.bprBandsPort.existingFull+d.bprBandsPort.existingHalf>0){
@@ -1990,10 +2045,18 @@ function buildReport(){
   rows+=trow('Less: existing DGT / trust investments (already outside estate)', '\u2212'+fmt(d.eDGT), '', 'neg');
   var netEst = curSolution==='dgt' ? d.dgt_net : d.port_net;
   rows+=trow('Net estate liable to Inheritance Tax', fmt(netEst), '', 'total');
-  rows+=trow('Less: Nil Rate Band ('+(d.nc===2?'2 people \u00d7 \u00a3325,000':'\u00a3325,000')+')', '\u2212'+fmt(d.nrb), '', 'neg');
-  rows+=trow('Less: Residential Nil Rate Band <button type="button" class="info-i" onclick="showTaperInfo()">i</button>', '\u2212'+fmt(d.rnrb.av), '', 'neg');
-  rows+=trow('Less: gifts within the last 7 years', d.gifts>0?'\u2212'+fmt(d.gifts):'\u2014', '', 'neg');
+  // Gifts inside seven years reduce the Nil Rate Band, so they are shown as a reduction of
+  // that band rather than as a separate deduction from the estate. Showing both, as this
+  // table previously did, presented the relief twice and stopped the column reconciling to
+  // the tax figure printed beneath it.
+  var solRnrb = curSolution==='dgt' ? d.rnrbDgt : d.rnrbPort;
+  var repSolEffNrb = Math.max(0, d.nrb-d.gifts);
+  rows+=trow('Less: Nil Rate Band ('+(d.nc===2?'2 people \u00d7 \u00a3325,000':'\u00a3325,000')+')'+
+    (d.gifts>0?' <span style="font-weight:400;opacity:.7">less '+fmt(d.gifts)+' of gifts within the last 7 years</span>':''),
+    '\u2212'+fmt(repSolEffNrb), '', 'neg');
+  rows+=trow('Less: Residential Nil Rate Band <button type="button" class="info-i" onclick="showTaperInfo()">i</button>', '\u2212'+fmt(solRnrb.av), '', 'neg');
   var solIHT = curSolution==='dgt' ? d.dgt_i : d.port_i;
+  rows+=trow('Estate liable to Inheritance Tax', fmt(solIHT.liable), '', 'total');
   rows+=trow('Inheritance Tax due (40%)', fmt(solIHT.iht), '', 'iht');
   rows+=trow('New Whole of Life cover in trust', fmt(sol.wl));
   if(d.la>0) rows+=trow('Existing life assurance already in trust', fmt(d.la));

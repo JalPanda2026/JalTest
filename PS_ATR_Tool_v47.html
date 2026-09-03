@@ -26060,18 +26060,18 @@ function _buildAndDownloadWord(){
   // Helper: justified body paragraph in brand dark grey
   const bodyPara=(text,opts)=>new Paragraph(Object.assign({
     spacing:{after:160},alignment:AlignmentType.JUSTIFIED,
-    children:[new TextRun(Object.assign({text,font:FONT,size:22,color:DARK_GREY},opts||{}))]
+    children:[new TextRun(Object.assign({text,font:FONT,size:20,color:DARK_GREY},opts||{}))]
   },{}));
 
   // Helper: label+value row — label column is instructional, so both columns are centre-justified
   const kvRow=(label,value)=>new TableRow({children:[
     new TableCell({width:{size:3000,type:WidthType.DXA},borders,shading:{fill:PS_PURPLE_L,type:ShadingType.CLEAR},
       margins:{top:80,bottom:80,left:120,right:120},
-      children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:label,font:FONT,size:22,bold:true,color:PS_PURPLE})]})]
+      children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:label,font:FONT,size:20,bold:true,color:PS_PURPLE})]})]
     }),
     new TableCell({width:{size:6800,type:WidthType.DXA},borders,
       margins:{top:80,bottom:80,left:120,right:120},
-      children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:String(value||'—'),font:FONT,size:22,color:DARK_GREY})]})]
+      children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:String(value||'—'),font:FONT,size:20,color:DARK_GREY})]})]
     })
   ]});
 
@@ -26085,17 +26085,17 @@ function _buildAndDownloadWord(){
     new TableCell({width:{size:5200,type:WidthType.DXA},borders,
       shading:even?{fill:'FAF8FD',type:ShadingType.CLEAR}:{fill:'FFFFFF',type:ShadingType.CLEAR},
       margins:{top:80,bottom:80,left:120,right:120},
-      children:[new Paragraph({children:[new TextRun({text:question,font:FONT,size:22,color:DARK_GREY})]})]
+      children:[new Paragraph({children:[new TextRun({text:question,font:FONT,size:20,color:DARK_GREY})]})]
     }),
     new TableCell({width:{size:2500,type:WidthType.DXA},borders,
       shading:even?{fill:'FAF8FD',type:ShadingType.CLEAR}:{fill:'FFFFFF',type:ShadingType.CLEAR},
       margins:{top:80,bottom:80,left:120,right:120},
-      children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:answer||'—',font:FONT,size:22,bold:!!answer,color:answer?DARK_GREY:'AAAAAA'})]})]
+      children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:answer||'—',font:FONT,size:20,bold:!!answer,color:answer?DARK_GREY:'AAAAAA'})]})]
     }),
     new TableCell({width:{size:700,type:WidthType.DXA},borders,
       shading:even?{fill:'FAF8FD',type:ShadingType.CLEAR}:{fill:'FFFFFF',type:ShadingType.CLEAR},
       margins:{top:80,bottom:80,left:60,right:60},
-      children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:pts!==undefined?String(pts):'',font:FONT,size:22,bold:true,color:PS_PURPLE})]})]
+      children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:pts!==undefined?String(pts):'',font:FONT,size:20,bold:true,color:PS_PURPLE})]})]
     })
   ]});
 
@@ -26104,12 +26104,12 @@ function _buildAndDownloadWord(){
     new TableCell({width:{size:5500,type:WidthType.DXA},borders,
       shading:even?{fill:'FAF8FD',type:ShadingType.CLEAR}:{fill:'FFFFFF',type:ShadingType.CLEAR},
       margins:{top:80,bottom:80,left:120,right:120},
-      children:[new Paragraph({children:[new TextRun({text:question,font:FONT,size:22,color:DARK_GREY})]})]
+      children:[new Paragraph({children:[new TextRun({text:question,font:FONT,size:20,color:DARK_GREY})]})]
     }),
     new TableCell({width:{size:3300,type:WidthType.DXA},borders,
       shading:even?{fill:'FAF8FD',type:ShadingType.CLEAR}:{fill:'FFFFFF',type:ShadingType.CLEAR},
       margins:{top:80,bottom:80,left:120,right:120},
-      children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:answer||'—',font:FONT,size:22,bold:!!answer,color:answer?DARK_GREY:'AAAAAA'})]})]
+      children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:answer||'—',font:FONT,size:20,bold:!!answer,color:answer?DARK_GREY:'AAAAAA'})]})]
     })
   ]});
 
@@ -26163,11 +26163,11 @@ function _buildAndDownloadWord(){
         new TableRow({children:[
           new TableCell({width:{size:5600,type:WidthType.DXA},columnSpan:2,borders,
             shading:{fill:PS_PURPLE_L,type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},
-            children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:'Total ATR Score',font:FONT,size:22,bold:true,color:PS_PURPLE})]})]
+            children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:'Total ATR Score',font:FONT,size:20,bold:true,color:PS_PURPLE})]})]
           }),
           new TableCell({width:{size:2500,type:WidthType.DXA},borders,
             shading:{fill:PS_PURPLE_L,type:ShadingType.CLEAR},margins:{top:80,bottom:80,left:120,right:120},
-            children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:tot+' / 48',font:FONT,size:22,bold:true,color:PS_PURPLE})]})]
+            children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:tot+' / 48',font:FONT,size:20,bold:true,color:PS_PURPLE})]})]
           }),
           new TableCell({width:{size:700,type:WidthType.DXA},borders,
             shading:{fill:PS_PURPLE_L,type:ShadingType.CLEAR},margins:{top:80,bottom:80},
@@ -26284,7 +26284,7 @@ function _buildAndDownloadWord(){
     allChildren.push(new Paragraph({children:[new PageBreak()]}));
     allChildren.push(bigHead('Risk profile',44));
     allChildren.push(bodyPara('This section details how we reached an agreed risk level for this goal. It covers factors including your natural attitude to risk, capacity for loss and required return; factors used when selecting the types of investments and determining suitability.'));
-    allChildren.push(new Paragraph({spacing:{before:80,after:80},children:[new TextRun({text:'How are risk levels used to create suitable investment portfolios?',font:FONT,size:22,bold:true,color:PS_PURPLE})]}));
+    allChildren.push(new Paragraph({spacing:{before:80,after:80},children:[new TextRun({text:'How are risk levels used to create suitable investment portfolios?',font:FONT,size:20,bold:true,color:PS_PURPLE})]}));
     allChildren.push(bodyPara('The natural risk level, which is ascertained from the psychometric attitude to risk questionnaire score, is used as a starting point to discuss the actual level of risk you are willing and able to take to meet your specific investment objective.'));
     allChildren.push(bodyPara('In the discussion we had, you were shown a projection, based initially on your natural risk level, investment amount, target and desired time horizon. We then discussed this projection and altered any factor, including the risk level, until we agreed that the right balance had been achieved. This resulted in an agreed risk level for the investment.'));
     allChildren.push(bodyPara('To project the potential outcomes, each risk level is mapped to a collection of asset classes designed to expose you to an appropriate level of risk. Projections are produced by passing the asset class breakdown for the selected risk level to a stochastic engine that uses modelling provided by Hymans Robertson to project the future performance of the combination of asset classes.'));
@@ -26311,7 +26311,7 @@ function _buildAndDownloadWord(){
       rows:[new TableRow({children:[
         new TableCell({width:{size:2700,type:WidthType.DXA},borders:noBorders,verticalAlign:VerticalAlign.TOP,children:[gradeBox(lvl)]}),
         new TableCell({width:{size:7100,type:WidthType.DXA},borders:noBorders,margins:{left:200},
-          children:[new Paragraph({alignment:AlignmentType.JUSTIFIED,children:[new TextRun({text:PROFILES[lvl].desc,font:FONT,size:22,color:DARK_GREY})]})]
+          children:[new Paragraph({alignment:AlignmentType.JUSTIFIED,children:[new TextRun({text:PROFILES[lvl].desc,font:FONT,size:20,color:DARK_GREY})]})]
         })
       ]})]
     });
@@ -26322,7 +26322,7 @@ function _buildAndDownloadWord(){
       const c=[];
       c.push(bigHead('Natural risk level',32));
       c.push(bodyPara('Your natural risk level is based on the answers given in the Attitude to Risk Questionnaire which was completed on '+today()+'. The responses can be found in the appendix.'));
-      c.push(new Paragraph({spacing:{after:120},children:[new TextRun({text:cName.toUpperCase(),font:FONT,size:22,bold:true,color:PS_PURPLE})]}));
+      c.push(new Paragraph({spacing:{after:120},children:[new TextRun({text:cName.toUpperCase(),font:FONT,size:20,bold:true,color:PS_PURPLE})]}));
       c.push(riskLevelRow(natLvl));
       c.push(bigHead('Agreed risk level',32));
       c.push(bodyPara('Following an interactive discussion, and considering your natural attitude to risk, capacity for loss and required return for your goal, we agreed a risk level.'));
@@ -26343,7 +26343,7 @@ function _buildAndDownloadWord(){
         children:[new TextRun({text:'•  '+t,font:FONT,size:20,color:DARK_GREY})]});
       const defCell=(title,items)=>new TableCell({width:{size:4900,type:WidthType.DXA},borders:noBorders,
         margins:{top:140,bottom:140,left:180,right:180},shading:{fill:'F3F0F9',type:ShadingType.CLEAR},
-        children:[new Paragraph({spacing:{after:100},children:[new TextRun({text:title,font:FONT,size:21,bold:true,color:PS_PURPLE})]}),...items.map(bulletPara)]});
+        children:[new Paragraph({spacing:{after:100},children:[new TextRun({text:title,font:FONT,size:20,bold:true,color:PS_PURPLE})]}),...items.map(bulletPara)]});
 
       // — Page 1: definition + typical asset allocation —
       allChildren.push(new Paragraph({children:[new PageBreak()]}));
@@ -26363,7 +26363,7 @@ function _buildAndDownloadWord(){
       allChildren.push(bodyPara('Projections take account of an estimated annual total charge of '+ENGAGE_EX.charge+'% (representing tax wrapper, platform and fund charges as well as any ongoing advice charges) and are shown in real terms, meaning they account for the impact of inflation.'));
       allChildren.push(new Paragraph({spacing:{before:60,after:60},children:[new ImageRun({data:engageProjBytes(gL),transformation:{width:600,height:329},type:'png'})]}));
       allChildren.push(new Paragraph({spacing:{after:140},children:[new TextRun({text:'Figure: a projection of the illustrative investment at risk level '+gL+'.',font:FONT,size:18,italics:true,color:MED_GREY})]}));
-      allChildren.push(new Paragraph({spacing:{after:80},children:[new TextRun({text:'Potential outcome',font:FONT,size:22,bold:true,color:PS_PURPLE})]}));
+      allChildren.push(new Paragraph({spacing:{after:80},children:[new TextRun({text:'Potential outcome',font:FONT,size:20,bold:true,color:PS_PURPLE})]}));
       const outRow=(l,v,hl)=>new TableRow({children:[
         new TableCell({width:{size:6500,type:WidthType.DXA},borders,shading:{fill:hl?PS_PURPLE:PS_PURPLE_L,type:ShadingType.CLEAR},margins:{top:90,bottom:90,left:150,right:150},
           children:[new Paragraph({children:[new TextRun({text:l,font:FONT,size:20,bold:true,color:hl?'FFFFFF':PS_PURPLE})]})]}),
@@ -26382,10 +26382,10 @@ function _buildAndDownloadWord(){
     allChildren.push(new Paragraph({children:[new PageBreak()]}));
     allChildren.push(bigHead('Pocock Sanders Risk Assessment Report',32));
     allChildren.push(new Paragraph({spacing:{after:120},children:[new TextRun({text:'In association with Defaqto Engage',font:FONT,size:26,bold:true,color:PS_PURPLE})]}));
-    allChildren.push(new Paragraph({spacing:{after:40},alignment:AlignmentType.CENTER,children:[new TextRun({text:'Client: '+clientName,font:FONT,size:22,bold:true,color:DARK_GREY})]}));
+    allChildren.push(new Paragraph({spacing:{after:40},alignment:AlignmentType.CENTER,children:[new TextRun({text:'Client: '+clientName,font:FONT,size:20,bold:true,color:DARK_GREY})]}));
     allChildren.push(new Paragraph({spacing:{after:160},alignment:AlignmentType.CENTER,
       border:{bottom:{style:BorderStyle.SINGLE,size:8,color:PS_PURPLE,space:6}},
-      children:[new TextRun({text:'Date: '+today()+'  ·  Adviser: '+advName,font:FONT,size:22,color:DARK_GREY})]}));
+      children:[new TextRun({text:'Date: '+today()+'  ·  Adviser: '+advName,font:FONT,size:20,color:DARK_GREY})]}));
 
     // ── This client's questionnaire responses ──
     allChildren.push(...buildPartnerSection(p,clientName,true));

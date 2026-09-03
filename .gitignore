@@ -1,0 +1,21 @@
+# Client work must never be committed. This tool holds no data of its own, but saved
+# reports and exports can, so they are blocked here as a safety net.
+*.pdf
+IHT_Report_*
+*_Report_*.html
+
+# Scratch and local variants
+*.bak
+*.tmp
+*.orig
+*~
+*.local.html
+scratch/
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp

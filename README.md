@@ -1,91 +1,21 @@
-# Pocock Sanders Inheritance Tax Planner
+# Pocock Sanders ATR Tool
 
-A self-contained HTML tool that models a client's Inheritance Tax position and produces a
-branded, printable planning report. It runs entirely in the browser. There is no server, no
-build step and no external data storage, so nothing that is typed into it leaves the machine
-it is opened on.
+A self-contained HTML tool that captures a client's Attitude to Risk, scores the
+responses and produces a branded report. It runs entirely in the browser. There is no
+server, no build step and no external data storage, so nothing that is typed into it
+leaves the machine it is opened on.
 
-Current file: `Pocock_Sanders_IHT_Calculator.html` (calculator version 16.22).
+Current file: `PS_ATR_Tool_v47.html` (ATR Tool v47).
 
 ## Running it
 
-Open the file in a browser. Double-clicking it works, as does opening it from a network share.
-Chrome or Edge are preferred, because the report is produced through the browser print dialogue
-and those two give the most reliable "Save as PDF" output.
+Open the file in a browser. Double-clicking it works, as does opening it from a network
+share. Chrome or Edge are preferred, because the report is produced through the browser
+print dialogue and those two give the most reliable "Save as PDF" output.
 
-The only external dependency is a web font pulled from `fonts.cdnfonts.com`. Without a network
-connection the tool still works and falls back to Calibri, so the figures and the report are
-unaffected.
+The tool has no external dependencies. It works fully offline.
 
-## What it covers
+## Notes
 
-The tool works through six steps: the estate and asset position, the Inheritance Tax position
-under current rules, the position from 6 April 2027 once unused pension funds come inside the
-estate, a Discounted Gift Trust with Whole of Life cover, a Business Relief or AIM ISA
-investment, and a final client report.
-
-Rules and thresholds reflected in the current version:
-
-| Item | Treatment |
-|---|---|
-| Nil Rate Band | £325,000 per person, frozen to April 2031 |
-| Residence Nil Rate Band | £175,000 per person, frozen to April 2031 |
-| RNRB taper | Reduced by £1 for every £2 of estate value above £2,000,000 |
-| Standard rate | 40% |
-| BPR and APR | 100% relief on the first £2.5m of combined qualifying property per person, 50% above that, since 6 April 2026 |
-| AIM-listed shares | 50% relief only since 6 April 2026, and outside the £2.5m allowance |
-| Unused pension funds | Inside the estate from 6 April 2027 |
-
-### The £2m taper test
-
-The taper threshold is tested against the value of the death estate, not against the gross
-estate figure shown to the client. The two differ, and the difference changes the answer:
-
-- Assets genuinely outside the estate do not count. Pension funds are excluded until
-  6 April 2027, and value already settled into trust or gifted away and survived is excluded
-  throughout.
-- Reliefs are ignored, so Business Relief and Agricultural Relief property counts at full
-  value even though it is relieved out of the taxable estate.
-
-The practical consequence is worth drawing out with clients. A Business Relief investment
-cannot restore a Residence Nil Rate Band that the taper has withdrawn, because the relieved
-property still counts towards the threshold. A gift into trust can, because that value leaves
-the estate. For an estate sitting between £2m and £2.35m, that distinction is worth up to
-£140,000 of tax and is modelled separately for each scenario.
-
-## Tests
-
-`node tests/test_engine.js`
-
-There is no browser in the way of this. The test harness lifts the script block out of the
-HTML and runs it against a minimal DOM stub, then drives the real functions directly, so the
-tests exercise shipped code rather than a copy of it. Coverage is the taper mechanics, the
-BPR and APR allowance bands, the per-scenario taper bases, the funding-source warnings and
-the reconciliation of the client report table to the tax figure it prints.
-
-## Modelling assumptions
-
-These are simplifications built into the current version. They are reasonable for an
-illustration but they matter when reading the output:
-
-- A couple is modelled as a single combined estate, with allowances doubled. This assumes the
-  full Nil Rate Band and Residence Nil Rate Band transfer on first death and that the spouse
-  exemption applies in full.
-- Lifetime gifts within seven years reduce the available Nil Rate Band. Taper relief and any
-  separate charge on the donee are not modelled.
-- The estate is entered gross. There is no field for mortgages, loans or other liabilities.
-- The reduced 36% rate for estates leaving 10% or more to charity is not modelled.
-- Existing Business Relief and trust holdings are assumed to have completed their qualifying
-  periods, being two years for Business Relief and seven years for gifts into trust.
-
-## Branding
-
-Purple `#502D7F` (Pantone 268), Calibri Light throughout, with the firm logo embedded as
-base64 so the file stays self-contained. The report prints to A4 with fixed margins so that
-every printer and every "Save as PDF" produces the same pagination.
-
-## Regulatory note
-
-Output is an illustration to support a discussion between the client and their adviser. It is
-not a precise calculation of any actual liability and it is not personalised advice. The
-generated report carries the full caveats and the firm's FCA reference.
+This branch holds the ATR tool only. The Inheritance Tax Planner lives on its own
+branch and is not part of this branch.

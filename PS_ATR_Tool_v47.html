@@ -26042,7 +26042,8 @@ function _buildAndDownloadWord(){
   const psSqBytes=Uint8Array.from(atob(WORD_PS_SQUARE_B64),c=>c.charCodeAt(0));
 
   // Helper: large purple Defaqto-style page heading (e.g. "Risk profile", "Pocock Sanders Risk Assessment Report")
-  const bigHead=(text,size)=>new Paragraph({
+  const bigHead=(text,size,pbBefore)=>new Paragraph({
+    pageBreakBefore:!!pbBefore,
     spacing:{before:160,after:160},
     children:[new TextRun({text,font:FONT,size:size||56,bold:true,color:PS_PURPLE})]
   });
@@ -26281,8 +26282,7 @@ function _buildAndDownloadWord(){
       children:[new TextRun({text:today()+'  ·  pococksanders.co.uk',font:FONT,size:18,color:MED_GREY})]}));
 
     // ── Risk profile explanatory section ──
-    allChildren.push(new Paragraph({children:[new PageBreak()]}));
-    allChildren.push(bigHead('Risk profile',44));
+    allChildren.push(bigHead('Risk profile',44,true));
     allChildren.push(bodyPara('This section details how we reached an agreed risk level for this goal. It covers factors including your natural attitude to risk, capacity for loss and required return; factors used when selecting the types of investments and determining suitability.'));
     allChildren.push(new Paragraph({spacing:{before:80,after:80},children:[new TextRun({text:'How are risk levels used to create suitable investment portfolios?',font:FONT,size:20,bold:true,color:PS_PURPLE})]}));
     allChildren.push(bodyPara('The natural risk level, which is ascertained from the psychometric attitude to risk questionnaire score, is used as a starting point to discuss the actual level of risk you are willing and able to take to meet your specific investment objective.'));
@@ -26320,7 +26320,7 @@ function _buildAndDownloadWord(){
       const natLvl=ans===12?scoreToLevel(Object.values(pp.atr).reduce((a,b)=>a+b.pts,0)):5;
       const agrLvl=pp.agreed||natLvl;
       const c=[];
-      c.push(bigHead('Natural risk level',32));
+      c.push(bigHead('Natural risk level',32,true));
       c.push(bodyPara('Your natural risk level is based on the answers given in the Attitude to Risk Questionnaire which was completed on '+today()+'. The responses can be found in the appendix.'));
       c.push(new Paragraph({spacing:{after:120},children:[new TextRun({text:cName.toUpperCase(),font:FONT,size:20,bold:true,color:PS_PURPLE})]}));
       c.push(riskLevelRow(natLvl));
@@ -26329,7 +26329,6 @@ function _buildAndDownloadWord(){
       c.push(riskLevelRow(agrLvl));
       return c;
     };
-    allChildren.push(new Paragraph({children:[new PageBreak()]}));
     allChildren.push(...natAgreedSection(p,clientName));
 
     // ── Investment risk profile — definition, typical allocation & illustrative projection (Defaqto Engage, grades 4–10) ──
@@ -26346,8 +26345,7 @@ function _buildAndDownloadWord(){
         children:[new Paragraph({spacing:{after:100},children:[new TextRun({text:title,font:FONT,size:20,bold:true,color:PS_PURPLE})]}),...items.map(bulletPara)]});
 
       // — Page 1: definition + typical asset allocation —
-      allChildren.push(new Paragraph({children:[new PageBreak()]}));
-      allChildren.push(bigHead('Your investment risk profile — Grade '+gL+': '+PROFILES[gL].name,30));
+      allChildren.push(bigHead('Your investment risk profile — Grade '+gL+': '+PROFILES[gL].name,30,true));
       allChildren.push(bodyPara('The following reflects your agreed risk level. Speak to your adviser if any of these statements do not reflect the risk you are willing and able to take.'));
       allChildren.push(new Table({width:{size:9800,type:WidthType.DXA},columnWidths:[4900,4900],borders:noBorders,
         rows:[new TableRow({children:[defCell('As a '+PROFILES[gL].name+' investor:',E.self),defCell('You may also be suited to this approach if you:',E.suited)]})]}));
@@ -26356,13 +26354,11 @@ function _buildAndDownloadWord(){
       allChildren.push(new Paragraph({spacing:{before:40,after:80},children:[new ImageRun({data:engageDonutBytes(gL),transformation:{width:470,height:210},type:'png'})]}));
 
       // — Page 2: illustrative investment projection —
-      allChildren.push(new Paragraph({children:[new PageBreak()]}));
-      allChildren.push(bigHead('Your investment — illustrative projection',28));
-      allChildren.push(bodyPara('The figures below are a standard illustration for a risk level '+gL+' investor, based on an initial investment of '+money(ENGAGE_EX.init)+', regular monthly contributions of '+money(ENGAGE_EX.monthly)+' and an investment period of '+ENGAGE_EX.years+' years. It is an example produced by Defaqto Engage to show how outcomes vary with risk level. It is not a projection of your own portfolio or of any specific holdings.'));
-      allChildren.push(bodyPara('On this basis the investment is projected to return between '+money(E.proj.poor)+' and '+money(E.proj.strong)+'. The orange line is the most likely outcome. There is a 10% chance that returns fall outside this range, either above or below the upper and lower lines.'));
-      allChildren.push(bodyPara('Projections take account of an estimated annual total charge of '+ENGAGE_EX.charge+'% (representing tax wrapper, platform and fund charges as well as any ongoing advice charges) and are shown in real terms, meaning they account for the impact of inflation.'));
-      allChildren.push(new Paragraph({spacing:{before:60,after:60},children:[new ImageRun({data:engageProjBytes(gL),transformation:{width:600,height:329},type:'png'})]}));
-      allChildren.push(new Paragraph({spacing:{after:140},children:[new TextRun({text:'Figure: a projection of the illustrative investment at risk level '+gL+'.',font:FONT,size:18,italics:true,color:MED_GREY})]}));
+      allChildren.push(bigHead('Your investment — illustrative projection',28,true));
+      allChildren.push(bodyPara('The figures below are a standard Defaqto Engage illustration for a risk level '+gL+' investor, based on an initial investment of '+money(ENGAGE_EX.init)+', monthly contributions of '+money(ENGAGE_EX.monthly)+' and a '+ENGAGE_EX.years+'-year period. It shows how outcomes vary with risk level and is not a projection of your own portfolio.'));
+      allChildren.push(bodyPara('On this basis the investment is projected to return between '+money(E.proj.poor)+' and '+money(E.proj.strong)+'; the orange line is the most likely outcome, with a 10% chance of the result falling outside this range. Projections assume an estimated annual total charge of '+ENGAGE_EX.charge+'% (tax wrapper, platform, fund and any ongoing advice charges) and are shown in real terms, after inflation.'));
+      allChildren.push(new Paragraph({spacing:{before:40,after:40},children:[new ImageRun({data:engageProjBytes(gL),transformation:{width:480,height:263},type:'png'})]}));
+      allChildren.push(new Paragraph({spacing:{after:120},children:[new TextRun({text:'Figure: a projection of the illustrative investment at risk level '+gL+'.',font:FONT,size:18,italics:true,color:MED_GREY})]}));
       allChildren.push(new Paragraph({spacing:{after:80},children:[new TextRun({text:'Potential outcome',font:FONT,size:20,bold:true,color:PS_PURPLE})]}));
       const outRow=(l,v,hl)=>new TableRow({children:[
         new TableCell({width:{size:6500,type:WidthType.DXA},borders,shading:{fill:hl?PS_PURPLE:PS_PURPLE_L,type:ShadingType.CLEAR},margins:{top:90,bottom:90,left:150,right:150},
@@ -26379,8 +26375,7 @@ function _buildAndDownloadWord(){
     })();
 
     // ── Report header block — always starts on a fresh page ──
-    allChildren.push(new Paragraph({children:[new PageBreak()]}));
-    allChildren.push(bigHead('Pocock Sanders Risk Assessment Report',32));
+    allChildren.push(bigHead('Pocock Sanders Risk Assessment Report',32,true));
     allChildren.push(new Paragraph({spacing:{after:120},children:[new TextRun({text:'In association with Defaqto Engage',font:FONT,size:26,bold:true,color:PS_PURPLE})]}));
     allChildren.push(new Paragraph({spacing:{after:40},alignment:AlignmentType.CENTER,children:[new TextRun({text:'Client: '+clientName,font:FONT,size:20,bold:true,color:DARK_GREY})]}));
     allChildren.push(new Paragraph({spacing:{after:160},alignment:AlignmentType.CENTER,
@@ -26421,8 +26416,7 @@ function _buildAndDownloadWord(){
     }
 
     // ── Disclaimer — per brand guide: thin grey rule, bold italic grey heading, italic grey body ──
-    allChildren.push(new Paragraph({children:[new PageBreak()]}));
-    allChildren.push(new Paragraph({spacing:{before:0,after:100},
+    allChildren.push(new Paragraph({pageBreakBefore:true,spacing:{before:0,after:100},
       border:{top:{style:BorderStyle.SINGLE,size:4,color:'CCCCCC',space:8}},
       children:[new TextRun({text:'Disclaimer',font:FONT,size:18,bold:true,italics:true,color:MED_GREY})]}));
     allChildren.push(new Paragraph({spacing:{after:100},alignment:AlignmentType.JUSTIFIED,
@@ -26444,7 +26438,7 @@ function _buildAndDownloadWord(){
       description:'Risk Assessment Report — Defaqto Engage',
       styles:{default:{document:{run:{font:'Calibri Light',size:20}}}},
       sections:[{
-        properties:{page:{size:{width:11906,height:16838},margin:{top:1080,right:1080,bottom:1080,left:1080}}},
+        properties:{page:{size:{width:11906,height:16838},margin:{top:820,right:1080,bottom:760,left:1080,header:440,footer:440}}},
         headers:{default:makeHeader()},
         footers:{default:makeFooter(clientName)},
         children:buildClientChildren(clientKey)

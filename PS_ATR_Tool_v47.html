@@ -24677,6 +24677,84 @@ const GRADE_META=[
   {n:10,col:'#6E0000',icon:'🎯',short:'Speculative'},
 ];
 
+/* ═══ DEFAQTO ENGAGE — asset allocation, projection & definition by grade ═══
+   Static reproduction of the Defaqto Engage "Combined RG 4–10" output (licence
+   held by Pocock Sanders). Engage publishes grades 4–10 only.
+   The projection is Engage's standard worked illustration: £100,000 lump sum,
+   £0/month, 15 years, 1% annual charge, presented in REAL terms.
+   poor / likely / strong = 5th percentile / mean / 95th percentile of the
+   Hymans Robertson stochastic model. The graph is redrawn from a lognormal fit
+   whose 5th and 95th percentiles equal the published poor/strong exactly; the
+   orange (most likely) line is the mean. It reproduces Engage's example figures
+   to within ~1%. It is NOT a projection of any client's own portfolio. */
+const ENGAGE_EX={init:100000,monthly:0,years:15,charge:1,capLoss:50000};
+const ENGAGE_COL={Equities:'#EF7D00','Fixed Income':'#8E258D',Alternatives:'#5B2AA5',Cash:'#17A2A2'};
+const ENGAGE={
+ 4:{alloc:{Equities:46,'Fixed Income':40,Alternatives:5,Cash:9},proj:{poor:96500,likely:188500,strong:321500},
+    self:['You tend to see yourself as quite a cautious person','You are inclined to view risk negatively rather than as a source of opportunity','You are inclined to look for safer investments','You may consider taking some risk in exchange for increased potential returns'],
+    suited:['Have limited or moderate experience of investments','Do not find financial matters particularly easy to understand','Take some time to make investment decisions','Tend to be somewhat anxious about those decisions']},
+ 5:{alloc:{Equities:58,'Fixed Income':30,Alternatives:5,Cash:7},proj:{poor:90000,likely:200500,strong:371500},
+    self:['You do not see yourself as a particularly cautious person','You have no strong positive or negative associations with taking risk','You may look for a combination of investments with differing levels of risk','You understand that you may need to take some risk to meet your investment goals'],
+    suited:['Have some experience of investments','Have a degree of understanding of financial matters','Make investment decisions reasonably quickly','Do not tend to be particularly anxious about those decisions']},
+ 6:{alloc:{Equities:68,'Fixed Income':23,Alternatives:5,Cash:4},proj:{poor:84500,likely:213500,strong:423000},
+    self:['You do not see yourself as a cautious person','You have no strong positive or negative associations with taking risk','You may look for a combination of investments with differing levels of risk','You understand that you may need to take some risk to meet your investment goals'],
+    suited:['Have experience of investments','Have a degree of understanding of financial matters','Make investment decisions reasonably quickly','Do not tend to be particularly anxious about those decisions']},
+ 7:{alloc:{Equities:78,'Fixed Income':14,Alternatives:5,Cash:3},proj:{poor:77000,likely:226500,strong:482500},
+    self:['You do not view yourself as cautious','You see risk as an opportunity rather than a threat','You typically seek higher returns rather than safer investments','You understand that taking some risk is necessary to meet your investment goals'],
+    suited:['Have investment experience','Find financial matters relatively easy to understand','Make investment decisions relatively quickly','Are not usually particularly anxious about those decisions']},
+ 8:{alloc:{Equities:86,'Fixed Income':6,Alternatives:5,Cash:3},proj:{poor:70500,likely:239500,strong:543500},
+    self:['You do not see yourself as a cautious person','You view risk as a source of opportunity rather than as a threat','You often look for higher returns rather than safer investments','You understand that you need to take risk to meet your investment goals'],
+    suited:['Have significant experience of investments','Find financial matters fairly easy to understand','Make investment decisions relatively quickly','Are not usually particularly anxious about those decisions']},
+ 9:{alloc:{Equities:96,Alternatives:4},proj:{poor:63500,likely:254500,strong:618500},
+    self:['You do not see yourself as a cautious person','You usually view risk as a source of opportunity rather than as a threat','You normally look for higher returns rather than safer investments','You understand that you need to take considerable risk to meet your investment goals'],
+    suited:['Have substantial experience of investments','Find financial matters easy to understand','Make investment decisions quite quickly','Are not generally anxious about those decisions']},
+ 10:{alloc:{Equities:100},proj:{poor:57500,likely:269000,strong:693500},
+    self:['You do not see yourself as a cautious person','You usually view risk as a source of opportunity rather than as a threat','You always look for higher returns rather than safer investments','You understand that you need to take a high level of risk to meet your investment goals'],
+    suited:['Have substantial experience of investments','Find financial matters easy to understand','Make investment decisions quickly','Are not generally anxious about those decisions']}
+};
+function _engagePngBytes(canvas){return Uint8Array.from(atob(canvas.toDataURL('image/png').split(',')[1]),c=>c.charCodeAt(0));}
+function engageDonutBytes(grade){
+  const alloc=ENGAGE[grade].alloc;
+  const entries=Object.keys(alloc).filter(k=>alloc[k]>0).map(k=>[k,alloc[k]]);
+  const SC=2,W=470,H=210,c=document.createElement('canvas');c.width=W*SC;c.height=H*SC;
+  const x=c.getContext('2d');x.scale(SC,SC);x.fillStyle='#fff';x.fillRect(0,0,W,H);
+  const cx=105,cy=105,rO=88,rI=50;let a=-Math.PI/2;
+  entries.forEach(([k,v])=>{const ang=v/100*Math.PI*2;x.beginPath();x.moveTo(cx,cy);x.arc(cx,cy,rO,a,a+ang);x.closePath();x.fillStyle=ENGAGE_COL[k]||'#999';x.fill();a+=ang;});
+  x.beginPath();x.arc(cx,cy,rI,0,Math.PI*2);x.fillStyle='#fff';x.fill();
+  let ly=cy-(entries.length*28)/2+12;const lx=220;x.textBaseline='middle';
+  entries.forEach(([k,v])=>{
+    x.fillStyle=ENGAGE_COL[k]||'#999';x.fillRect(lx,ly-7,15,15);
+    x.fillStyle='#333';x.textAlign='left';x.font='600 14px Calibri,Segoe UI,sans-serif';x.fillText(k,lx+24,ly);
+    x.textAlign='right';x.font='700 14px Calibri,Segoe UI,sans-serif';x.fillText(v+'%',W-10,ly);ly+=28;});
+  return _engagePngBytes(c);
+}
+function engageProjBytes(grade){
+  const pr=ENGAGE[grade].proj,P=ENGAGE_EX.init,T=ENGAGE_EX.years,Z=1.6448536269514722;
+  const sig=(Math.log(pr.strong/pr.poor)/(2*Z))/Math.sqrt(T);
+  const mu=Math.log(Math.sqrt(pr.poor*pr.strong)/P)/T;
+  const f=t=>{const s=sig*Math.sqrt(t),m=P*Math.exp(mu*t);return{t,strong:P*Math.exp(mu*t+Z*s),poor:P*Math.exp(mu*t-Z*s),avg:m*Math.exp(s*s/2)};};
+  const N=60,pts=[];for(let i=0;i<=N;i++)pts.push(f(T*i/N));
+  const SC=2,W=600,H=329,c=document.createElement('canvas');c.width=W*SC;c.height=H*SC;
+  const x=c.getContext('2d');x.scale(SC,SC);x.fillStyle='#fff';x.fillRect(0,0,W,H);
+  const L=45,R=W-78,Tp=18,B=H-32,yMax=Math.ceil(pr.strong*1.06/50000)*50000;
+  const X=t=>L+(R-L)*(t/T),Y=v=>B-(B-Tp)*(v/yMax);
+  const nSteps=yMax>=600000?8:7,step=yMax/nSteps;
+  x.strokeStyle='#E6E6E6';x.lineWidth=1;x.font='11px Calibri,sans-serif';x.fillStyle='#666';
+  for(let g=0;g<=yMax+1;g+=step){const yy=Y(g);x.beginPath();x.moveTo(L,yy);x.lineTo(R,yy);x.stroke();x.textAlign='left';x.textBaseline='middle';x.fillText('£'+Math.round(g).toLocaleString('en-GB'),R+6,yy);}
+  x.textAlign='center';x.textBaseline='top';for(let t=0;t<=14;t+=2)x.fillText(String(t),X(t),B+6);
+  x.beginPath();pts.forEach((p,i)=>i?x.lineTo(X(p.t),Y(p.strong)):x.moveTo(X(p.t),Y(p.strong)));for(let i=pts.length-1;i>=0;i--)x.lineTo(X(pts[i].t),Y(pts[i].poor));x.closePath();x.fillStyle='rgba(91,42,165,0.10)';x.fill();
+  const line=(key,col,w)=>{x.beginPath();x.strokeStyle=col;x.lineWidth=w;pts.forEach((p,i)=>i?x.lineTo(X(p.t),Y(p[key])):x.moveTo(X(p.t),Y(p[key])));x.stroke();};
+  line('strong','#5B2AA5',1.8);line('poor','#5B2AA5',1.8);line('avg','#EF7D00',2.4);
+  x.strokeStyle='#7A1F1F';x.lineWidth=1.4;x.beginPath();x.moveTo(X(0),Y(P));x.lineTo(X(T),Y(P));x.stroke();
+  x.strokeStyle='#111';x.lineWidth=1.2;x.setLineDash([5,4]);x.beginPath();x.moveTo(X(0),Y(ENGAGE_EX.capLoss));x.lineTo(X(T),Y(ENGAGE_EX.capLoss));x.stroke();x.setLineDash([]);
+  x.strokeStyle='#888';x.lineWidth=1;x.beginPath();x.moveTo(R,Tp);x.lineTo(R,B);x.lineTo(L,B);x.stroke();
+  const gbp=n=>'£'+n.toLocaleString('en-GB');
+  const lg=[['Strong market','#5B2AA5',gbp(pr.strong)],['Avg. market','#EF7D00',gbp(pr.likely)],['Poor market','#5B2AA5',gbp(pr.poor)],['Contributions','#7A1F1F',gbp(P)],['Capacity for loss','#111',gbp(ENGAGE_EX.capLoss)]];
+  x.font='10px Calibri,sans-serif';let lyy=Tp+8;
+  lg.forEach(([lab,col,val])=>{x.strokeStyle=col;x.lineWidth=2;x.beginPath();x.moveTo(L+6,lyy);x.lineTo(L+26,lyy);x.stroke();x.fillStyle='#333';x.textAlign='left';x.textBaseline='middle';x.fillText(lab+': '+val,L+30,lyy);lyy+=13;});
+  return _engagePngBytes(c);
+}
+
 const SECTIONS={atr:true,cfl:true,exp:true,esg:false};
 
 function toggleSection(id){SECTIONS[id]=!SECTIONS[id];document.getElementById('lc-'+id).classList.toggle('selected',SECTIONS[id]);if(id==='esg'){document.getElementById('esg-toggle').checked=SECTIONS.esg;S.esgOn=SECTIONS.esg;toggleESG();}}
@@ -26253,6 +26331,52 @@ function _buildAndDownloadWord(){
     };
     allChildren.push(new Paragraph({children:[new PageBreak()]}));
     allChildren.push(...natAgreedSection(p,clientName));
+
+    // ── Investment risk profile — definition, typical allocation & illustrative projection (Defaqto Engage, grades 4–10) ──
+    (function(){
+      const ansN=Object.keys(p.atr).length;
+      const natL=ansN===12?scoreToLevel(Object.values(p.atr).reduce((a,b)=>a+b.pts,0)):5;
+      const gL=p.agreed||natL;
+      if(!ENGAGE[gL])return;                // Engage publishes grades 4–10 only
+      const E=ENGAGE[gL],money=n=>'£'+Number(n).toLocaleString('en-GB');
+      const bulletPara=t=>new Paragraph({spacing:{after:50},indent:{left:200,hanging:150},
+        children:[new TextRun({text:'•  '+t,font:FONT,size:20,color:DARK_GREY})]});
+      const defCell=(title,items)=>new TableCell({width:{size:4900,type:WidthType.DXA},borders:noBorders,
+        margins:{top:140,bottom:140,left:180,right:180},shading:{fill:'F3F0F9',type:ShadingType.CLEAR},
+        children:[new Paragraph({spacing:{after:100},children:[new TextRun({text:title,font:FONT,size:21,bold:true,color:PS_PURPLE})]}),...items.map(bulletPara)]});
+
+      // — Page 1: definition + typical asset allocation —
+      allChildren.push(new Paragraph({children:[new PageBreak()]}));
+      allChildren.push(bigHead('Your investment risk profile — Grade '+gL+': '+PROFILES[gL].name,30));
+      allChildren.push(bodyPara('The following reflects your agreed risk level. Speak to your adviser if any of these statements do not reflect the risk you are willing and able to take.'));
+      allChildren.push(new Table({width:{size:9800,type:WidthType.DXA},columnWidths:[4900,4900],borders:noBorders,
+        rows:[new TableRow({children:[defCell('As a '+PROFILES[gL].name+' investor:',E.self),defCell('You may also be suited to this approach if you:',E.suited)]})]}));
+      allChildren.push(bigHead('Typical asset allocation',26));
+      allChildren.push(bodyPara('The chart below shows a typical asset allocation for a risk level '+gL+' investor.'));
+      allChildren.push(new Paragraph({spacing:{before:40,after:80},children:[new ImageRun({data:engageDonutBytes(gL),transformation:{width:470,height:210},type:'png'})]}));
+
+      // — Page 2: illustrative investment projection —
+      allChildren.push(new Paragraph({children:[new PageBreak()]}));
+      allChildren.push(bigHead('Your investment — illustrative projection',28));
+      allChildren.push(bodyPara('The figures below are a standard illustration for a risk level '+gL+' investor, based on an initial investment of '+money(ENGAGE_EX.init)+', regular monthly contributions of '+money(ENGAGE_EX.monthly)+' and an investment period of '+ENGAGE_EX.years+' years. It is an example produced by Defaqto Engage to show how outcomes vary with risk level. It is not a projection of your own portfolio or of any specific holdings.'));
+      allChildren.push(bodyPara('On this basis the investment is projected to return between '+money(E.proj.poor)+' and '+money(E.proj.strong)+'. The orange line is the most likely outcome. There is a 10% chance that returns fall outside this range, either above or below the upper and lower lines.'));
+      allChildren.push(bodyPara('Projections take account of an estimated annual total charge of '+ENGAGE_EX.charge+'% (representing tax wrapper, platform and fund charges as well as any ongoing advice charges) and are shown in real terms, meaning they account for the impact of inflation.'));
+      allChildren.push(new Paragraph({spacing:{before:60,after:60},children:[new ImageRun({data:engageProjBytes(gL),transformation:{width:600,height:329},type:'png'})]}));
+      allChildren.push(new Paragraph({spacing:{after:140},children:[new TextRun({text:'Figure: a projection of the illustrative investment at risk level '+gL+'.',font:FONT,size:18,italics:true,color:MED_GREY})]}));
+      allChildren.push(new Paragraph({spacing:{after:80},children:[new TextRun({text:'Potential outcome',font:FONT,size:22,bold:true,color:PS_PURPLE})]}));
+      const outRow=(l,v,hl)=>new TableRow({children:[
+        new TableCell({width:{size:6500,type:WidthType.DXA},borders,shading:{fill:hl?PS_PURPLE:PS_PURPLE_L,type:ShadingType.CLEAR},margins:{top:90,bottom:90,left:150,right:150},
+          children:[new Paragraph({children:[new TextRun({text:l,font:FONT,size:20,bold:true,color:hl?'FFFFFF':PS_PURPLE})]})]}),
+        new TableCell({width:{size:3300,type:WidthType.DXA},borders,margins:{top:90,bottom:90,left:150,right:150},verticalAlign:VerticalAlign.CENTER,
+          children:[new Paragraph({alignment:AlignmentType.RIGHT,children:[new TextRun({text:v,font:FONT,size:20,bold:true,color:DARK_GREY})]})]})]});
+      allChildren.push(new Table({width:{size:9800,type:WidthType.DXA},columnWidths:[6500,3300],rows:[
+        outRow('5% chance of being worth more than',money(E.proj.strong),true),
+        outRow('Most likely return',money(E.proj.likely),false),
+        outRow('5% chance of being worth less than',money(E.proj.poor),true),
+        outRow('Total contributions',money(ENGAGE_EX.init),false)]}));
+      allChildren.push(new Paragraph({spacing:{before:140},border:{top:{style:BorderStyle.SINGLE,size:4,color:'CCCCCC',space:6}},
+        children:[new TextRun({text:'Not a guarantee of actual performance. These figures can vary significantly with the underlying assets, market conditions and other economic factors. With any investment there is potential for loss.',font:FONT,size:17,italics:true,color:MED_GREY})]}));
+    })();
 
     // ── Report header block — always starts on a fresh page ──
     allChildren.push(new Paragraph({children:[new PageBreak()]}));

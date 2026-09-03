@@ -24734,7 +24734,7 @@ function engageProjBytes(grade){
   const mu=Math.log(Math.sqrt(pr.poor*pr.strong)/P)/T;
   const f=t=>{const s=sig*Math.sqrt(t),m=P*Math.exp(mu*t);return{t,strong:P*Math.exp(mu*t+Z*s),poor:P*Math.exp(mu*t-Z*s),avg:m*Math.exp(s*s/2)};};
   const N=60,pts=[];for(let i=0;i<=N;i++)pts.push(f(T*i/N));
-  const SC=2,W=600,H=329,c=document.createElement('canvas');c.width=W*SC;c.height=H*SC;
+  const SC=2,W=680,H=300,c=document.createElement('canvas');c.width=W*SC;c.height=H*SC;
   const x=c.getContext('2d');x.scale(SC,SC);x.fillStyle='#fff';x.fillRect(0,0,W,H);
   const L=45,R=W-78,Tp=18,B=H-32,yMax=Math.ceil(pr.strong*1.06/50000)*50000;
   const X=t=>L+(R-L)*(t/T),Y=v=>B-(B-Tp)*(v/yMax);
@@ -26282,14 +26282,10 @@ function _buildAndDownloadWord(){
       children:[new TextRun({text:today()+'  ·  pococksanders.co.uk',font:FONT,size:18,color:MED_GREY})]}));
 
     // ── Risk profile explanatory section ──
-    allChildren.push(bigHead('Risk profile',44,true));
-    allChildren.push(bodyPara('This section details how we reached an agreed risk level for this goal. It covers factors including your natural attitude to risk, capacity for loss and required return; factors used when selecting the types of investments and determining suitability.'));
-    allChildren.push(new Paragraph({spacing:{before:80,after:80},children:[new TextRun({text:'How are risk levels used to create suitable investment portfolios?',font:FONT,size:20,bold:true,color:PS_PURPLE})]}));
-    allChildren.push(bodyPara('The natural risk level, which is ascertained from the psychometric attitude to risk questionnaire score, is used as a starting point to discuss the actual level of risk you are willing and able to take to meet your specific investment objective.'));
-    allChildren.push(bodyPara('In the discussion we had, you were shown a projection, based initially on your natural risk level, investment amount, target and desired time horizon. We then discussed this projection and altered any factor, including the risk level, until we agreed that the right balance had been achieved. This resulted in an agreed risk level for the investment.'));
-    allChildren.push(bodyPara('To project the potential outcomes, each risk level is mapped to a collection of asset classes designed to expose you to an appropriate level of risk. Projections are produced by passing the asset class breakdown for the selected risk level to a stochastic engine that uses modelling provided by Hymans Robertson to project the future performance of the combination of asset classes.'));
-    allChildren.push(bodyPara('By using these projections and discussions, we came to an agreed risk level for your specific investment objective. A portfolio will be built to meet your agreed risk level.'));
-    allChildren.push(bodyPara('A summary of the results of this process is documented below.',{}));
+    allChildren.push(bigHead('Risk profile',32,true));
+    allChildren.push(bodyPara('This section explains how we reached an agreed risk level for this goal, taking account of your natural attitude to risk, capacity for loss and the return required to meet your objective. Your natural risk level, from the attitude to risk questionnaire, is the starting point for that discussion.'));
+    allChildren.push(bodyPara('In our discussion you were shown a projection based initially on your natural risk level, investment amount, target and time horizon. We then adjusted the relevant factors, including the risk level, until the right balance was reached, giving an agreed risk level for the investment.'));
+    allChildren.push(bodyPara('Each risk level maps to a collection of asset classes chosen to give an appropriate level of risk. Projections are produced by passing that asset class breakdown to a stochastic engine using modelling provided by Hymans Robertson. A portfolio will then be built to meet your agreed risk level, summarised below.'));
 
     // ── Natural / Agreed risk level ──
     const gradeBox=(lvl)=>new Table({
@@ -26320,11 +26316,11 @@ function _buildAndDownloadWord(){
       const natLvl=ans===12?scoreToLevel(Object.values(pp.atr).reduce((a,b)=>a+b.pts,0)):5;
       const agrLvl=pp.agreed||natLvl;
       const c=[];
-      c.push(bigHead('Natural risk level',32,true));
-      c.push(bodyPara('Your natural risk level is based on the answers given in the Attitude to Risk Questionnaire which was completed on '+today()+'. The responses can be found in the appendix.'));
+      c.push(bigHead('Natural risk level',28));
+      c.push(bodyPara('Your natural risk level is based on the answers given in the Attitude to Risk Questionnaire completed on '+today()+'. The full responses are in the appendix.'));
       c.push(new Paragraph({spacing:{after:120},children:[new TextRun({text:cName.toUpperCase(),font:FONT,size:20,bold:true,color:PS_PURPLE})]}));
       c.push(riskLevelRow(natLvl));
-      c.push(bigHead('Agreed risk level',32));
+      c.push(bigHead('Agreed risk level',28));
       c.push(bodyPara('Following an interactive discussion, and considering your natural attitude to risk, capacity for loss and required return for your goal, we agreed a risk level.'));
       c.push(riskLevelRow(agrLvl));
       return c;
@@ -26366,7 +26362,7 @@ function _buildAndDownloadWord(){
           ]})
         ]})]}));
       allChildren.push(new Paragraph({spacing:{before:80,after:20},children:[new TextRun({text:'Illustrative projection — '+money(ENGAGE_EX.init)+' invested over '+ENGAGE_EX.years+' years, '+ENGAGE_EX.charge+'% annual charge, in real terms',font:FONT,size:18,bold:true,color:PS_PURPLE})]}));
-      allChildren.push(new Paragraph({spacing:{after:20},children:[new ImageRun({data:engageProjBytes(gL),transformation:{width:440,height:249},type:'png'})]}));
+      allChildren.push(new Paragraph({spacing:{after:20},children:[new ImageRun({data:engageProjBytes(gL),transformation:{width:648,height:286},type:'png'})]}));
       allChildren.push(new Paragraph({children:[new TextRun({text:'A standard Defaqto Engage illustration showing how outcomes vary with risk level; not a projection of your own portfolio. The orange line is the most likely outcome, with a 10% chance of the result falling outside the range. Not a guarantee of actual performance.',font:FONT,size:16,italics:true,color:MED_GREY})]}));
     })();
 

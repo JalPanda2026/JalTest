@@ -26344,34 +26344,30 @@ function _buildAndDownloadWord(){
         margins:{top:140,bottom:140,left:180,right:180},shading:{fill:'F3F0F9',type:ShadingType.CLEAR},
         children:[new Paragraph({spacing:{after:100},children:[new TextRun({text:title,font:FONT,size:20,bold:true,color:PS_PURPLE})]}),...items.map(bulletPara)]});
 
-      // — Page 1: definition + typical asset allocation —
-      allChildren.push(bigHead('Your investment risk profile — Grade '+gL+': '+PROFILES[gL].name,30,true));
-      allChildren.push(bodyPara('The following reflects your agreed risk level. Speak to your adviser if any of these statements do not reflect the risk you are willing and able to take.'));
+      // — Single page: definition, typical asset allocation & illustrative projection —
+      allChildren.push(bigHead('Your investment risk profile — Grade '+gL+': '+PROFILES[gL].name,28,true));
+      allChildren.push(bodyPara('The following reflects your agreed risk level. Speak to your adviser if any statement does not reflect the risk you are willing and able to take.'));
       allChildren.push(new Table({width:{size:9800,type:WidthType.DXA},columnWidths:[4900,4900],borders:noBorders,
         rows:[new TableRow({children:[defCell('As a '+PROFILES[gL].name+' investor:',E.self),defCell('You may also be suited to this approach if you:',E.suited)]})]}));
-      allChildren.push(bigHead('Typical asset allocation',26));
-      allChildren.push(bodyPara('The chart below shows a typical asset allocation for a risk level '+gL+' investor.'));
-      allChildren.push(new Paragraph({spacing:{before:40,after:80},children:[new ImageRun({data:engageDonutBytes(gL),transformation:{width:470,height:210},type:'png'})]}));
-
-      // — Page 2: illustrative investment projection —
-      allChildren.push(bigHead('Your investment — illustrative projection',28,true));
-      allChildren.push(bodyPara('The figures below are a standard Defaqto Engage illustration for a risk level '+gL+' investor, based on an initial investment of '+money(ENGAGE_EX.init)+', monthly contributions of '+money(ENGAGE_EX.monthly)+' and a '+ENGAGE_EX.years+'-year period. It shows how outcomes vary with risk level and is not a projection of your own portfolio.'));
-      allChildren.push(bodyPara('On this basis the investment is projected to return between '+money(E.proj.poor)+' and '+money(E.proj.strong)+'; the orange line is the most likely outcome, with a 10% chance of the result falling outside this range. Projections assume an estimated annual total charge of '+ENGAGE_EX.charge+'% (tax wrapper, platform, fund and any ongoing advice charges) and are shown in real terms, after inflation.'));
-      allChildren.push(new Paragraph({spacing:{before:40,after:40},children:[new ImageRun({data:engageProjBytes(gL),transformation:{width:480,height:263},type:'png'})]}));
-      allChildren.push(new Paragraph({spacing:{after:120},children:[new TextRun({text:'Figure: a projection of the illustrative investment at risk level '+gL+'.',font:FONT,size:18,italics:true,color:MED_GREY})]}));
-      allChildren.push(new Paragraph({spacing:{after:80},children:[new TextRun({text:'Potential outcome',font:FONT,size:20,bold:true,color:PS_PURPLE})]}));
-      const outRow=(l,v,hl)=>new TableRow({children:[
-        new TableCell({width:{size:6500,type:WidthType.DXA},borders,shading:{fill:hl?PS_PURPLE:PS_PURPLE_L,type:ShadingType.CLEAR},margins:{top:90,bottom:90,left:150,right:150},
-          children:[new Paragraph({children:[new TextRun({text:l,font:FONT,size:20,bold:true,color:hl?'FFFFFF':PS_PURPLE})]})]}),
-        new TableCell({width:{size:3300,type:WidthType.DXA},borders,margins:{top:90,bottom:90,left:150,right:150},verticalAlign:VerticalAlign.CENTER,
-          children:[new Paragraph({alignment:AlignmentType.RIGHT,children:[new TextRun({text:v,font:FONT,size:20,bold:true,color:DARK_GREY})]})]})]});
-      allChildren.push(new Table({width:{size:9800,type:WidthType.DXA},columnWidths:[6500,3300],rows:[
-        outRow('5% chance of being worth more than',money(E.proj.strong),true),
-        outRow('Most likely return',money(E.proj.likely),false),
-        outRow('5% chance of being worth less than',money(E.proj.poor),true),
-        outRow('Total contributions',money(ENGAGE_EX.init),false)]}));
-      allChildren.push(new Paragraph({spacing:{before:140},border:{top:{style:BorderStyle.SINGLE,size:4,color:'CCCCCC',space:6}},
-        children:[new TextRun({text:'Not a guarantee of actual performance. These figures can vary significantly with the underlying assets, market conditions and other economic factors. With any investment there is potential for loss.',font:FONT,size:17,italics:true,color:MED_GREY})]}));
+      // Typical asset allocation (donut) beside the potential-outcome figures
+      const outLine=(l,v)=>new Paragraph({spacing:{after:50},children:[new TextRun({text:l+':  ',font:FONT,size:18,bold:true,color:PS_PURPLE}),new TextRun({text:v,font:FONT,size:18,bold:true,color:DARK_GREY})]});
+      allChildren.push(new Table({width:{size:9800,type:WidthType.DXA},columnWidths:[4700,5100],borders:noBorders,
+        rows:[new TableRow({children:[
+          new TableCell({width:{size:4700,type:WidthType.DXA},borders:noBorders,verticalAlign:VerticalAlign.CENTER,children:[
+            new Paragraph({spacing:{before:80,after:40},children:[new TextRun({text:'Typical asset allocation',font:FONT,size:20,bold:true,color:PS_PURPLE})]}),
+            new Paragraph({children:[new ImageRun({data:engageDonutBytes(gL),transformation:{width:300,height:134},type:'png'})]})
+          ]}),
+          new TableCell({width:{size:5100,type:WidthType.DXA},borders:noBorders,verticalAlign:VerticalAlign.CENTER,margins:{left:200},children:[
+            new Paragraph({spacing:{before:80,after:60},children:[new TextRun({text:'Potential outcome',font:FONT,size:20,bold:true,color:PS_PURPLE})]}),
+            outLine('5% chance of being worth more than',money(E.proj.strong)),
+            outLine('Most likely return',money(E.proj.likely)),
+            outLine('5% chance of being worth less than',money(E.proj.poor)),
+            outLine('Total contributions',money(ENGAGE_EX.init))
+          ]})
+        ]})]}));
+      allChildren.push(new Paragraph({spacing:{before:80,after:20},children:[new TextRun({text:'Illustrative projection — '+money(ENGAGE_EX.init)+' invested over '+ENGAGE_EX.years+' years, '+ENGAGE_EX.charge+'% annual charge, in real terms',font:FONT,size:18,bold:true,color:PS_PURPLE})]}));
+      allChildren.push(new Paragraph({spacing:{after:20},children:[new ImageRun({data:engageProjBytes(gL),transformation:{width:440,height:249},type:'png'})]}));
+      allChildren.push(new Paragraph({children:[new TextRun({text:'A standard Defaqto Engage illustration showing how outcomes vary with risk level; not a projection of your own portfolio. The orange line is the most likely outcome, with a 10% chance of the result falling outside the range. Not a guarantee of actual performance.',font:FONT,size:16,italics:true,color:MED_GREY})]}));
     })();
 
     // ── Report header block — always starts on a fresh page ──

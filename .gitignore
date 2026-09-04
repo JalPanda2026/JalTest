@@ -1,8 +1,12 @@
-# Client work must never be committed. This tool holds no data of its own, but saved
-# reports and exports can, so they are blocked here as a safety net.
+# Client work must never be committed. These tools hold no data of their own, but saved
+# reports, backups and exports can, so they are blocked here as a safety net.
 *.pdf
 IHT_Report_*
 *_Report_*.html
+# Sales Tracker backups and exports (contain client names and figures)
+PS_Sales_Tracker_Backup_*
+PS_Sales_YTD_*
+PS_FollowUp_List_*
 
 # Scratch and local variants
 *.bak

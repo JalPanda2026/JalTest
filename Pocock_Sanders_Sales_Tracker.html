@@ -194,6 +194,74 @@
     width:100%;background:var(--ps-purple);color:white;font-weight:bold;border:none;
     border-radius:10px;padding:14px;font-size:16px;cursor:pointer;
   }
+
+  /* ===== v2.2 dashboard visual upgrade ===== */
+  :root{
+    --ps-purple-dark:#3C2160;
+    --ps-green:#1E7A45;
+    --ps-green-bg:#D9F2E3;
+    --ps-red:#c0392b;
+  }
+  .header{
+    background:linear-gradient(135deg,#5A3690 0%,var(--ps-purple) 55%,var(--ps-purple-dark) 100%);
+    position:relative;overflow:hidden;
+  }
+  .header::after{
+    content:"";position:absolute;right:-70px;top:-70px;width:240px;height:240px;border-radius:50%;
+    background:rgba(255,255,255,.06);pointer-events:none;
+  }
+  .header > *{position:relative;z-index:1;}
+  .card{
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.10);
+    transition:transform .2s ease, background .2s ease;
+  }
+  .card:hover{transform:translateY(-2px);background:rgba(255,255,255,.22);}
+  .card .value{letter-spacing:-.5px;}
+  .bar-track{height:12px;position:relative;}
+  .bar-fill{
+    background:linear-gradient(90deg,#F5C518,#FFDB58);
+    box-shadow:0 0 10px rgba(245,197,24,.45);position:relative;
+  }
+  .bar-fill.hit{
+    background:linear-gradient(90deg,#37C871,#7CE0A3);
+    box-shadow:0 0 12px rgba(55,200,113,.5);
+  }
+  .pace-marker{
+    position:absolute;top:-3px;width:2px;height:18px;background:rgba(255,255,255,.95);
+    border-radius:2px;box-shadow:0 0 4px rgba(0,0,0,.25);
+  }
+  .runrate{
+    margin-top:12px;background:rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  }
+  .runrate .rr-label{font-size:12px;opacity:.9;}
+  .runrate .rr-value{font-size:21px;font-weight:bold;letter-spacing:-.3px;}
+  .rr-chip{font-size:12px;font-weight:bold;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+  .rr-chip.ahead{background:var(--ps-green-bg);color:var(--ps-green);}
+  .rr-chip.behind{background:#FBE0DD;color:var(--ps-red);}
+  .pace-line{margin-top:8px;font-size:13px;font-weight:bold;display:flex;align-items:center;gap:6px;}
+  .pace-line.ahead{color:#2ecc71;}
+  .pace-line.behind{color:#ffd0c9;}
+
+  .dash-panel{
+    margin:14px 16px 0;background:white;border:1px solid var(--ps-mid-purple);border-radius:14px;
+    padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.04);
+  }
+  .dash-panel h3{margin:0 0 2px;color:var(--ps-purple);font-size:15px;}
+  .dash-panel .panel-sub{color:var(--ps-med-grey);font-size:12px;margin-bottom:10px;}
+  .yearchart{width:100%;height:auto;display:block;}
+  .yearchart .bar{transition:opacity .15s ease;}
+  .yearchart .bar:hover{opacity:.82;}
+  .chart-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:11.5px;color:var(--ps-med-grey);}
+  .chart-legend .key{display:inline-flex;align-items:center;gap:5px;}
+  .chart-legend .swatch{width:11px;height:11px;border-radius:3px;display:inline-block;}
+  .milestones{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px;}
+  .ms-card{background:var(--ps-light-purple);border-radius:12px;padding:10px 12px;border-left:3px solid var(--ps-purple);}
+  .ms-card .ms-num{font-size:19px;font-weight:bold;color:var(--ps-purple);line-height:1.15;}
+  .ms-card .ms-cap{font-size:11.5px;color:var(--ps-med-grey);margin-top:3px;}
+  @media (prefers-reduced-motion:reduce){
+    .card,.bar-fill,.yearchart .bar{transition:none;}
+  }
   .error{color:#e57373;font-size:14px;margin-bottom:8px;}
 </style>
 </head>
@@ -237,6 +305,13 @@
         <span class="hit" id="goalHit" style="display:none;">🏆 Goal hit!</span>
       </div>
     </div>
+    <div class="runrate" id="runRate" style="display:none;">
+      <div>
+        <div class="rr-label">On current pace, year end</div>
+        <div class="rr-value" id="runRateValue">£0</div>
+      </div>
+      <span class="rr-chip" id="runRateChip">—</span>
+    </div>
   </div>
 
   <div class="goal-box">
@@ -254,6 +329,7 @@
         <span class="hit" id="monthlyGoalHit" style="display:none;">🌟 Target hit!</span>
       </div>
       <div id="monthlyGoalMessage" style="font-size:14px;margin-top:8px;font-weight:bold;"></div>
+      <div class="pace-line" id="paceLine" style="display:none;"></div>
     </div>
   </div>
 
@@ -271,6 +347,18 @@
       <div id="loaOverdueList" class="loa-overdue-list"></div>
     </div>
   </div>
+</div>
+
+<div class="dash-panel" id="dashPanel">
+  <h3 id="yearChartTitle">Year at a glance</h3>
+  <div class="panel-sub" id="yearChartSub">Total fees by month</div>
+  <div id="yearChartWrap"></div>
+  <div class="chart-legend" id="yearChartLegend" style="display:none;">
+    <span class="key"><span class="swatch" style="background:var(--ps-purple);"></span>Monthly total fees</span>
+    <span class="key"><span class="swatch" style="background:var(--ps-gold);"></span>Best month</span>
+    <span class="key" id="legendTarget" style="display:none;"><span class="swatch" style="background:var(--ps-med-grey);"></span>Average monthly target</span>
+  </div>
+  <div class="milestones" id="milestones"></div>
 </div>
 
 <div class="toolbar">
@@ -471,7 +559,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-  const APP_VERSION = '2.1';
+  const APP_VERSION = '2.2';
   const STORAGE_KEY = 'ps_sales_entries';
   const GOAL_KEY = 'ps_sales_goal';
   const MONTHLY_GOAL_KEY = 'ps_sales_monthly_goals';
@@ -559,15 +647,81 @@
     };
   }
 
+  // ---- Dashboard maths (pure; unit-tested) ----
+  // Working days are Monday–Friday. Pace and run-rate use working days rather than calendar
+  // days because fees land on working days, so the pace line is a fair "should be here by now".
+  function parseLocalDate(s){ const [y,m,d] = s.slice(0,10).split('-').map(Number); return new Date(y, m-1, d); }
+  function workingDaysBetween(start, end){
+    if(end < start) return 0;
+    let n = 0; const d = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    while(d <= end){ const wd = d.getDay(); if(wd >= 1 && wd <= 5) n++; d.setDate(d.getDate()+1); }
+    return n;
+  }
+  // Fraction of a month's working days that have elapsed by `today` (0 before, 1 after).
+  function monthPaceRatio(mKey, today){
+    const [y,m] = mKey.split('-').map(Number);
+    const first = new Date(y, m-1, 1);
+    const last = new Date(y, m, 0);
+    const t = parseLocalDate(today);
+    if(t < first) return 0;
+    if(t >= last) return 1;
+    const total = workingDaysBetween(first, last);
+    return total ? workingDaysBetween(first, t) / total : 1;
+  }
+  // Fraction of the year's working days elapsed by `today`.
+  function yearPaceRatio(year, today){
+    const first = new Date(year, 0, 1);
+    const last = new Date(year, 11, 31);
+    const t = parseLocalDate(today);
+    if(t < first) return 0;
+    if(t >= last) return 1;
+    const total = workingDaysBetween(first, last);
+    return total ? workingDaysBetween(first, t) / total : 1;
+  }
+  // Straight-line projection of the year-end total from the pace so far.
+  function projectYearEnd(ytdTotal, year, today){
+    const p = yearPaceRatio(year, today);
+    return p > 0 ? Math.round(ytdTotal / p) : 0;
+  }
+  // Total fees per calendar month of a year, index 0 = January.
+  function monthlyTotals(list, year){
+    const arr = new Array(12).fill(0);
+    list.forEach(e => { if(e.date.slice(0,4) === String(year)) arr[Number(e.date.slice(5,7)) - 1] += (e.total||0); });
+    return arr;
+  }
+  // Best single month across all history.
+  function bestMonth(list){
+    const map = {};
+    list.forEach(e => { const k = e.date.slice(0,7); map[k] = (map[k]||0) + (e.total||0); });
+    let key = null, value = -Infinity;
+    Object.keys(map).forEach(k => { if(map[k] > value){ value = map[k]; key = k; } });
+    return key ? { key, value } : null;
+  }
+  // Consecutive most-recent months (that had a target set) where the target was met.
+  function targetStreak(list, goals, uptoKey){
+    const totals = {};
+    list.forEach(e => { const k = e.date.slice(0,7); totals[k] = (totals[k]||0) + (e.total||0); });
+    const months = Object.keys(goals).filter(k => (goals[k]||0) > 0 && k <= uptoKey).sort().reverse();
+    let streak = 0;
+    for(const k of months){ if((totals[k]||0) >= goals[k]) streak++; else break; }
+    return streak;
+  }
+  // Next round-number milestone above the YTD figure, and the gap to it.
+  function nextMilestone(ytd){
+    const step = ytd < 50000 ? 10000 : ytd < 200000 ? 25000 : 50000;
+    const milestone = Math.ceil((ytd + 1) / step) * step;
+    return { milestone, remaining: milestone - ytd };
+  }
+
   function render(){
     const year = selectedMonth.slice(0,4);
     const monthEntries = entries.filter(e => monthKey(e.date) === selectedMonth).sort((a,b)=> a.date.localeCompare(b.date));
     const ytdEntries = entries.filter(e => e.date.slice(0,4) === year);
 
-    document.getElementById('mtdTotal').textContent = fmt(sumField(monthEntries,'total'));
+    animateNumber(document.getElementById('mtdTotal'), sumField(monthEntries,'total'));
     document.getElementById('mtdCount').textContent = monthEntries.length + ' client' + (monthEntries.length!==1?'s':'');
     document.getElementById('ytdLabel').textContent = 'Year to Date ' + year;
-    document.getElementById('ytdTotal').textContent = fmt(sumField(ytdEntries,'total'));
+    animateNumber(document.getElementById('ytdTotal'), sumField(ytdEntries,'total'));
     document.getElementById('ytdCount').textContent = ytdEntries.length + ' client' + (ytdEntries.length!==1?'s':'');
     document.getElementById('mtdActual').textContent = fmt(sumField(monthEntries,'actual'));
     document.getElementById('mtdProtection').textContent = fmt(sumField(monthEntries,'protection'));
@@ -752,12 +906,136 @@
         </tr>
       `).join('');
     }
+
+    renderDashboard();
   }
 
   function escapeHtml(s){
     const d = document.createElement('div');
     d.textContent = s;
     return d.innerHTML;
+  }
+
+  // ---- Dashboard rendering (DOM) ----
+  function animateNumber(el, to){
+    if(!el) return;
+    to = Math.round(to || 0);
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const from = Number(el.dataset.val || 0);
+    el.dataset.val = to;
+    if(reduce || from === to || typeof requestAnimationFrame === 'undefined'){ el.textContent = fmt(to); return; }
+    const dur = 450, t0 = performance.now();
+    if(el._raf) cancelAnimationFrame(el._raf);
+    const step = (t) => {
+      const p = Math.min(1, (t - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(from + (to - from) * eased);
+      if(p < 1) el._raf = requestAnimationFrame(step); else el.textContent = fmt(to);
+    };
+    el._raf = requestAnimationFrame(step);
+  }
+
+  function renderDashboard(){
+    const year = Number(selectedMonth.slice(0,4));
+    const today = todayStr();
+    const ytdEntries = entries.filter(e => e.date.slice(0,4) === String(year));
+    const ytdTotal = sumField(ytdEntries, 'total');
+    const monthEntries = entries.filter(e => monthKey(e.date) === selectedMonth);
+    const mtdTotal = sumField(monthEntries, 'total');
+
+    // Run-rate projection to year end (needs an annual goal to compare against)
+    const rr = document.getElementById('runRate');
+    if(goal > 0){
+      const projected = projectYearEnd(ytdTotal, year, today);
+      document.getElementById('runRateValue').textContent = fmt(projected);
+      const diff = projected - goal;
+      const chip = document.getElementById('runRateChip');
+      if(diff >= 0){ chip.className = 'rr-chip ahead'; chip.textContent = `▲ ${fmt(diff)} ahead of goal`; }
+      else { chip.className = 'rr-chip behind'; chip.textContent = `▼ ${fmt(-diff)} short of goal`; }
+      rr.style.display = 'flex';
+    } else { rr.style.display = 'none'; }
+
+    // Monthly pace, only for the live month
+    const target = monthlyGoals[selectedMonth] || 0;
+    const paceEl = document.getElementById('paceLine');
+    const isCurrent = selectedMonth === monthKey(today);
+    const bar = document.getElementById('monthlyGoalBar');
+    let marker = document.getElementById('paceMarker');
+    if(target > 0 && isCurrent){
+      const ratio = monthPaceRatio(selectedMonth, today);
+      const expected = target * ratio;
+      const delta = mtdTotal - expected;
+      if(!marker && bar){ marker = document.createElement('div'); marker.id = 'paceMarker'; marker.className = 'pace-marker'; bar.parentElement.appendChild(marker); }
+      if(marker){ marker.style.left = Math.min(100, Math.round(ratio*100)) + '%'; marker.title = `${fmt(expected)} expected by today`; }
+      const pctDays = Math.round(ratio*100);
+      if(delta >= 0){ paceEl.className = 'pace-line ahead'; paceEl.innerHTML = `▲ ${fmt(delta)} ahead of pace &mdash; ${pctDays}% of the month's working days done`; }
+      else { paceEl.className = 'pace-line behind'; paceEl.innerHTML = `▼ ${fmt(-delta)} behind pace &mdash; ${pctDays}% of the month's working days done`; }
+      paceEl.style.display = 'flex';
+    } else {
+      paceEl.style.display = 'none';
+      if(marker) marker.remove();
+    }
+
+    buildYearChart(year, ytdTotal);
+    buildMilestones(year, ytdTotal, today);
+  }
+
+  function buildYearChart(year, ytdTotal){
+    const totals = monthlyTotals(entries, year);
+    const wrap = document.getElementById('yearChartWrap');
+    document.getElementById('yearChartTitle').textContent = `Year at a glance · ${year}`;
+    document.getElementById('yearChartSub').textContent = `Total fees by month · ${fmt(ytdTotal)} booked so far`;
+
+    // best month within this year (for the gold highlight)
+    let bestIdx = -1, bestVal = 0;
+    totals.forEach((v,i) => { if(v > bestVal){ bestVal = v; bestIdx = i; } });
+
+    const labels = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+    const full = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const W = 680, H = 152, padT = 8, padB = 22, gap = 8;
+    const n = 12, bw = (W - gap*(n-1)) / n;
+    const maxV = Math.max(1, ...totals);
+    const plotH = H - padT - padB;
+    const avgTarget = goal > 0 ? goal/12 : 0;
+    const yOf = v => padT + plotH*(1 - v/maxV);
+
+    let bars = '';
+    totals.forEach((v,i) => {
+      const x = i*(bw+gap);
+      const h = v > 0 ? Math.max(2, plotH*(v/maxV)) : 0;
+      const yy = padT + plotH - h;
+      const isBest = i === bestIdx && bestVal > 0;
+      const fill = isBest ? 'var(--ps-gold)' : 'var(--ps-purple)';
+      bars += `<g class="bar"><title>${full[i]} ${year}: ${fmt(v)}${isBest ? ' — best month this year' : ''}</title>` +
+        `<rect x="${x.toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="3" fill="${fill}"></rect>` +
+        `<text x="${(x+bw/2).toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="11" fill="#666">${labels[i]}</text></g>`;
+    });
+
+    let targetLine = '';
+    const legendTarget = document.getElementById('legendTarget');
+    if(avgTarget > 0 && avgTarget <= maxV){
+      const ty = yOf(avgTarget);
+      targetLine = `<line x1="0" y1="${ty.toFixed(1)}" x2="${W}" y2="${ty.toFixed(1)}" stroke="#666" stroke-width="1" stroke-dasharray="4 4"></line>`;
+      legendTarget.style.display = 'inline-flex';
+    } else { legendTarget.style.display = 'none'; }
+
+    wrap.innerHTML = `<svg class="yearchart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Total fees by month for ${year}">${targetLine}${bars}</svg>`;
+    document.getElementById('yearChartLegend').style.display = totals.some(v => v > 0) ? 'flex' : 'none';
+  }
+
+  function buildMilestones(year, ytdTotal, today){
+    const el = document.getElementById('milestones');
+    const cards = [];
+    if(Object.keys(monthlyGoals).length){
+      const streak = targetStreak(entries, monthlyGoals, monthKey(today));
+      cards.push({ num: streak, cap: streak > 0 ? `month${streak !== 1 ? 's' : ''} in a row target hit` : 'a hit this month starts a streak' });
+    }
+    const best = bestMonth(entries);
+    if(best){ cards.push({ num: fmt(best.value), cap: `best month so far (${monthLabel(best.key)})` }); }
+    const ms = nextMilestone(ytdTotal);
+    cards.push({ num: fmt(ms.remaining), cap: `to your next milestone of ${fmt(ms.milestone)} YTD` });
+    cards.push({ num: fmt(ytdTotal), cap: `total fees booked in ${year}` });
+    el.innerHTML = cards.map(c => `<div class="ms-card"><div class="ms-num">${c.num}</div><div class="ms-cap">${c.cap}</div></div>`).join('');
   }
 
   document.getElementById('monthSelect').addEventListener('change', function(){

@@ -4,7 +4,26 @@ A self-contained HTML tool for logging sales, fees, protection, LOAs and monthly
 targets. It runs entirely in the browser. There is no server and no build step. Nothing typed
 into it leaves the machine it is opened on.
 
-Current file: `Pocock_Sanders_Sales_Tracker.html` (version 2.1).
+Current file: `Pocock_Sanders_Sales_Tracker.html` (version 2.2).
+
+## Dashboard
+
+The top of the tool is a performance dashboard, refreshed on every change:
+
+- **Run-rate projection.** From the pace of the year so far (counted in working days), the
+  projected year-end total, with a chip showing how far ahead of or short of the annual goal
+  that pace lands. Shown only when an annual goal is set.
+- **Monthly pace.** For the live month, how far ahead of or behind the steady pace you are, in
+  pounds, with a marker on the target bar at the point the month has reached. Pace uses working
+  days, so it is a fair "where you should be by today".
+- **Year at a glance.** A bar of total fees for each month of the selected year, the best month
+  in gold, and a dashed line at the average monthly figure the annual goal implies. Hover a bar
+  for its figure.
+- **Milestones.** Consecutive months the monthly target was met, best month so far, the gap to
+  the next round-number YTD milestone, and the year's running total.
+
+All figures are rounded to the nearest pound. Progress percentages on the bars are shown as
+whole numbers for readability; this is an internal dashboard, not client-facing output.
 
 ## Running it
 
@@ -95,8 +114,10 @@ rows are skipped so nothing is double-counted. Rows that duplicate an existing e
 
 The harness lifts the inline script out of the HTML and runs it against a minimal DOM stub, the
 same technique used for the IHT planner, so the tests exercise shipped code. Coverage is the
-total-mismatch flag and the merge logic (adding only new records, skipping duplicates under a
-different id, and the handling of goals and monthly targets).
+total-mismatch flag, the merge logic (adding only new records, skipping duplicates under a
+different id, and the handling of goals and monthly targets), and the dashboard maths (working
+days, monthly and yearly pace, the year-end projection, monthly totals, best month, target
+streaks and the next milestone).
 
 ## Branding
 

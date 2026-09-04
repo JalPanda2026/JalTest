@@ -22,7 +22,7 @@ function mkEl(id) {
     id, value: '', innerHTML: '', textContent: '', className: '',
     style: {}, dataset: {}, files: null,
     classList: { add() {}, remove() {}, contains() { return false; }, toggle() {} },
-    appendChild() {}, addEventListener() {}, removeEventListener() {},
+    appendChild() {}, addEventListener() {}, removeEventListener() {}, remove() {},
     click() {}, focus() {}, setAttribute() {}, getAttribute() { return null; },
     querySelector() { return mkEl(id + ':q'); }, querySelectorAll() { return []; }
   };
@@ -98,6 +98,69 @@ ok('missing fields treated as zero', totalMismatch({ total: 0 }) === false);
   const m = mergeBackup({ entries: [], loaEntries: [L1], goal: 0, monthlyGoals: {} },
                         { entries: [], loaEntries: [L1, L2], goal: 0, monthlyGoals: {} });
   ok('LOA merge adds only the new LOA', m.loaEntries.length === 2 && m.loaAdded === 1);
+}
+
+// ── Dashboard maths ──────────────────────────────────────────────────────────────
+// working days: 1 Jan 2026 is a Thursday; 1–7 Jan has Thu Fri Mon Tue Wed = 5 working days
+ok('workingDaysBetween counts Mon–Fri only', workingDaysBetween(new Date(2026,0,1), new Date(2026,0,7)) === 5,
+   'got ' + workingDaysBetween(new Date(2026,0,1), new Date(2026,0,7)));
+
+ok('monthPaceRatio is 0 before the month', monthPaceRatio('2026-01', '2025-12-31') === 0);
+ok('monthPaceRatio is 1 after the month', monthPaceRatio('2026-01', '2026-02-15') === 1);
+{
+  const r = monthPaceRatio('2026-01', '2026-01-15');
+  ok('monthPaceRatio is strictly between 0 and 1 mid-month', r > 0 && r < 1, 'got ' + r);
+}
+
+ok('yearPaceRatio is 0 before the year', yearPaceRatio(2026, '2025-06-01') === 0);
+ok('yearPaceRatio is 1 after the year', yearPaceRatio(2026, '2027-01-01') === 1);
+
+ok('projectYearEnd of zero is zero', projectYearEnd(0, 2026, '2026-06-01') === 0);
+ok('projectYearEnd at full-year pace equals YTD', projectYearEnd(100000, 2026, '2027-01-01') === 100000);
+
+{
+  const list = [
+    { date: '2026-01-10', total: 1000 },
+    { date: '2026-03-10', total: 2000 },
+    { date: '2025-05-10', total: 9999 }
+  ];
+  const t = monthlyTotals(list, 2026);
+  ok('monthlyTotals has 12 slots', t.length === 12);
+  ok('monthlyTotals buckets by month and year', t[0] === 1000 && t[2] === 2000 && t[1] === 0);
+}
+
+{
+  const list = [
+    { date: '2026-01-10', total: 1000 },
+    { date: '2026-01-20', total: 500 },
+    { date: '2026-03-10', total: 2000 }
+  ];
+  const b = bestMonth(list);
+  ok('bestMonth finds the largest month', b.key === '2026-03' && b.value === 2000);
+}
+
+{
+  const list = [
+    { date: '2026-01-01', total: 120 },
+    { date: '2026-02-01', total: 50 },
+    { date: '2026-03-01', total: 200 }
+  ];
+  const goals = { '2026-01': 100, '2026-02': 100, '2026-03': 100 };
+  ok('targetStreak stops at the first miss walking back', targetStreak(list, goals, '2026-03') === 1,
+     'got ' + targetStreak(list, goals, '2026-03'));
+  const list2 = [
+    { date: '2026-01-01', total: 120 },
+    { date: '2026-02-01', total: 150 },
+    { date: '2026-03-01', total: 200 }
+  ];
+  ok('targetStreak counts all consecutive hits', targetStreak(list2, goals, '2026-03') === 3);
+}
+
+{
+  const a = nextMilestone(45000);
+  ok('nextMilestone under 50k steps by 10k', a.milestone === 50000 && a.remaining === 5000);
+  const c = nextMilestone(120000);
+  ok('nextMilestone in mid range steps by 25k', c.milestone === 125000 && c.remaining === 5000);
 }
 
 console.log(`\n${pass} passed, ${fail} failed`);

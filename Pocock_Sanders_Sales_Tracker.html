@@ -282,11 +282,13 @@
   <button class="btn btn-backup" onclick="downloadBackup()">💾 Backup All Data</button>
   <button class="btn btn-backup" onclick="document.getElementById('restoreFile').click()">📂 Restore Backup</button>
   <input type="file" id="restoreFile" accept=".json" style="display:none;" onchange="handleRestoreFile(event)">
+  <button class="btn btn-backup" id="folderBtn" onclick="setupBackupFolder()">📁 Set Auto-Backup Folder</button>
   <button class="btn btn-danger" onclick="clearAllEntries()">🗑 Clear All</button>
   <button class="btn btn-followup" onclick="openFollowUp()">⏳ Follow Up</button>
 </div>
 <div id="importStatus" style="margin:8px 16px 0;font-size:12px;display:none;"></div>
 <div id="backupInfo" style="margin:8px 16px 0;font-size:12px;color:var(--ps-med-grey);"></div>
+<div id="folderInfo" style="margin:6px 16px 0;font-size:12px;color:var(--ps-med-grey);"></div>
 
 <div class="chips">
   <div class="chip"><div class="label">Fees (MTD)</div><div class="val" id="mtdActual">£0</div></div>
@@ -469,7 +471,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-  const APP_VERSION = '2.0';
+  const APP_VERSION = '2.1';
   const STORAGE_KEY = 'ps_sales_entries';
   const GOAL_KEY = 'ps_sales_goal';
   const MONTHLY_GOAL_KEY = 'ps_sales_monthly_goals';
@@ -489,15 +491,19 @@
   }
   function saveLoaEntries(){
     localStorage.setItem(LOA_KEY, JSON.stringify(loaEntries));
+    scheduleAutoSave();
   }
   function save(){
     localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    scheduleAutoSave();
   }
   function saveGoal(){
     localStorage.setItem(GOAL_KEY, JSON.stringify(goal));
+    scheduleAutoSave();
   }
   function saveMonthlyGoal(){
     localStorage.setItem(MONTHLY_GOAL_KEY, JSON.stringify(monthlyGoals));
+    scheduleAutoSave();
   }
 
   function fmt(n){ return '£' + Math.round(n||0).toLocaleString('en-GB'); }
@@ -908,17 +914,18 @@
   }
 
   // ---- Full Backup / Restore (everything: sales, LOAs, targets, goals) ----
-  function downloadBackup(){
-    const backup = {
-      backupType: 'PS_Sales_Tracker_Full_Backup',
-      appVersion: APP_VERSION,
-      backupDate: new Date().toISOString(),
-      entries,
-      goal,
-      monthlyGoals,
-      loaEntries
-    };
-    const json = JSON.stringify(backup, null, 2);
+  async function downloadBackup(){
+    // If an auto-backup folder is set, save straight there instead of the Downloads folder.
+    if(FS_OK && dirHandle){
+      if(!dirPermOK) dirPermOK = await ensurePermission(dirHandle);
+      if(dirPermOK && await writeAutoBackup(true)){
+        const s = document.getElementById('importStatus');
+        s.style.display = 'block'; s.style.color = '#4caf50';
+        s.textContent = `Backup saved to your chosen folder (PS_Sales_Tracker_Backup_${todayStr()}.json).`;
+        return;
+      }
+    }
+    const json = JSON.stringify(buildBackupObject(), null, 2);
     const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -931,6 +938,142 @@
     URL.revokeObjectURL(url);
     try{ localStorage.setItem(LAST_BACKUP_KEY, new Date().toISOString()); }catch(e){}
     updateBackupInfo();
+  }
+
+  // ---- Auto-backup to a chosen folder (Chrome/Edge File System Access API) ----
+  // The browser can only write to a folder the user has explicitly granted. The handle to
+  // that folder is remembered in IndexedDB so it survives restarts, but Chrome still asks to
+  // re-authorise once per session — the first save after reopening triggers that prompt.
+  const FS_OK = ('showDirectoryPicker' in window);
+  let dirHandle = null;      // FileSystemDirectoryHandle for the backup folder
+  let dirPermOK = false;     // permission confirmed this session
+  let autoSaveTimer = null;
+
+  function idbOpen(){
+    return new Promise((res, rej) => {
+      const r = indexedDB.open('ps_sales_tracker', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('kv');
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+  }
+  async function idbSet(key, val){
+    try{ const db = await idbOpen(); return await new Promise((res) => {
+      const tx = db.transaction('kv', 'readwrite');
+      tx.objectStore('kv').put(val, key);
+      tx.oncomplete = () => res(true); tx.onerror = () => res(false);
+    }); }catch(e){ return false; }
+  }
+  async function idbGet(key){
+    try{ const db = await idbOpen(); return await new Promise((res) => {
+      const tx = db.transaction('kv', 'readonly');
+      const g = tx.objectStore('kv').get(key);
+      g.onsuccess = () => res(g.result || null); g.onerror = () => res(null);
+    }); }catch(e){ return null; }
+  }
+
+  async function ensurePermission(handle, mode){
+    const opts = { mode: mode || 'readwrite' };
+    try{
+      if(await handle.queryPermission(opts) === 'granted') return true;
+      if(await handle.requestPermission(opts) === 'granted') return true;
+    }catch(e){}
+    return false;
+  }
+
+  function buildBackupObject(){
+    return {
+      backupType: 'PS_Sales_Tracker_Full_Backup',
+      appVersion: APP_VERSION,
+      backupDate: new Date().toISOString(),
+      entries, goal, monthlyGoals, loaEntries
+    };
+  }
+
+  async function chooseBackupFolder(){
+    if(!FS_OK){
+      alert('Auto-backup to a folder needs Chrome or Edge. In other browsers, use "Backup All Data" to save a file manually.');
+      return;
+    }
+    try{
+      const h = await window.showDirectoryPicker({ mode: 'readwrite' });
+      dirHandle = h;
+      dirPermOK = await ensurePermission(h);
+      await idbSet('ps_backup_dir', h);
+      updateFolderInfo();
+      if(dirPermOK) await writeAutoBackup(true);
+    }catch(e){ /* user cancelled the picker */ }
+  }
+
+  // The single button: pick a folder if none is set, otherwise re-authorise the saved one
+  // (and offer to change it once it is working).
+  async function setupBackupFolder(){
+    if(!FS_OK){ chooseBackupFolder(); return; }
+    if(dirHandle){
+      if(dirPermOK){
+        if(confirm('Auto-backup is on. Choose a different folder?')) chooseBackupFolder();
+        return;
+      }
+      dirPermOK = await ensurePermission(dirHandle);
+      updateFolderInfo();
+      if(dirPermOK){ await writeAutoBackup(true); return; }
+    }
+    chooseBackupFolder();
+  }
+
+  async function writeAutoBackup(silent){
+    if(!dirHandle || !dirPermOK) return false;
+    try{
+      const name = `PS_Sales_Tracker_Backup_${todayStr()}.json`;
+      const fh = await dirHandle.getFileHandle(name, { create: true });
+      const w = await fh.createWritable();
+      await w.write(JSON.stringify(buildBackupObject(), null, 2));
+      await w.close();
+      try{ localStorage.setItem(LAST_BACKUP_KEY, new Date().toISOString()); }catch(e){}
+      updateBackupInfo();
+      updateFolderInfo(silent ? 'saved' : 'saved');
+      return true;
+    }catch(err){
+      dirPermOK = false;
+      updateFolderInfo('error');
+      return false;
+    }
+  }
+
+  // Called after every data change. Debounced so a burst of edits writes once.
+  function scheduleAutoSave(){
+    if(!dirHandle) return;
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(async () => {
+      if(!dirPermOK){ dirPermOK = await ensurePermission(dirHandle); updateFolderInfo(); }
+      if(dirPermOK) writeAutoBackup(true);
+    }, 1200);
+  }
+
+  function updateFolderInfo(state){
+    const el = document.getElementById('folderInfo');
+    const btn = document.getElementById('folderBtn');
+    if(!el) return;
+    if(!FS_OK){
+      el.style.color = 'var(--ps-med-grey)';
+      el.innerHTML = '📁 Auto-backup to a folder is available in Chrome or Edge. In this browser, use "Backup All Data" instead.';
+      if(btn) btn.style.display = 'none';
+      return;
+    }
+    if(!dirHandle){
+      el.style.color = 'var(--ps-med-grey)';
+      el.innerHTML = '📁 Auto-backup folder not set. Click "Auto-Backup Folder" to choose your Dropbox folder — every change then saves there automatically.';
+      if(btn) btn.textContent = '📁 Set Auto-Backup Folder';
+    } else if(!dirPermOK){
+      el.style.color = '#c0392b';
+      el.innerHTML = '📁 Auto-backup is <b>paused</b> for this session. Click "Resume Auto-Backup", or just add or edit an entry and allow the folder when asked.';
+      if(btn) btn.textContent = '📁 Resume Auto-Backup';
+    } else {
+      el.style.color = '#1E7A45';
+      const when = state === 'saved' ? ` — saved ${new Date().toLocaleTimeString('en-GB')}` : '';
+      el.innerHTML = `📁 Auto-backup <b>on</b>. Every change saves to your chosen folder${when}.`;
+      if(btn) btn.textContent = '📁 Change Folder';
+    }
   }
 
   function updateBackupInfo(){
@@ -1345,6 +1488,19 @@
   // (monthly target input value is set per-month inside render())
   render();
   updateBackupInfo();
+
+  // Restore the saved auto-backup folder handle (if any). Chrome resets folder permission
+  // per session, so this only confirms it silently when already granted; otherwise the
+  // status line shows "paused" and the first save of the session re-requests access.
+  (async function initBackupFolder(){
+    if(!FS_OK){ updateFolderInfo(); return; }
+    const h = await idbGet('ps_backup_dir');
+    if(h){
+      dirHandle = h;
+      try{ dirPermOK = (await h.queryPermission({ mode: 'readwrite' })) === 'granted'; }catch(e){ dirPermOK = false; }
+    }
+    updateFolderInfo();
+  })();
 </script>
 
 </body>

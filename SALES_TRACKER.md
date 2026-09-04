@@ -4,7 +4,7 @@ A self-contained HTML tool for logging sales, fees, protection, LOAs and monthly
 targets. It runs entirely in the browser. There is no server and no build step. Nothing typed
 into it leaves the machine it is opened on.
 
-Current file: `Pocock_Sanders_Sales_Tracker.html` (version 2.0).
+Current file: `Pocock_Sanders_Sales_Tracker.html` (version 2.1).
 
 ## Running it
 
@@ -42,6 +42,27 @@ a week old.
 
 These backup files contain client names and figures. They are blocked in `.gitignore` and must
 never be committed or sent to any third-party service.
+
+## Auto-backup to a folder (Chrome or Edge)
+
+**Set Auto-Backup Folder** lets you nominate one folder (for example a Dropbox folder) that the
+tool writes to automatically. After you choose it once, every change saves a dated backup,
+`PS_Sales_Tracker_Backup_YYYY-MM-DD.json`, into that folder, overwriting the same file through
+the day. Pointing this at a Dropbox folder is the cleanest way to get the data onto every
+device: the tool writes locally and Dropbox handles the sync.
+
+Two limits come from the browser, not the tool:
+
+- It works only in **Chrome or Edge**. Other browsers fall back to the manual download, and the
+  status line says so.
+- Browsers reset folder permission each session for security. When you reopen the file, the
+  status line shows auto-backup as **paused**, and the first time you add or edit an entry the
+  browser asks you to allow the folder again. Click allow once and it is silent for the rest of
+  the session. There is no way to remove that one prompt without a server, which the tool
+  deliberately does not use.
+
+The folder choice is remembered between sessions, so you only pick it once per device. If you
+move the HTML file to a different location, choose the folder again.
 
 ## Updating the tool
 

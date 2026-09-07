@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PS Document Library — Pocock Sanders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ps:#3d1f6e;--ps2:#502D7F;--psl:#ebe6f4;--bg:#eeeaf6;
+  --white:#fff;--border:#e0daea;--text:#1a1525;--muted:#6b6280;
+  --green:#16a34a;--r:12px;--font:'Poppins',sans-serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+
+/* HEADER - matches PS AI Tools exactly */
+.topbar{background:var(--ps);padding:28px 40px 24px;display:flex;align-items:flex-start;justify-content:space-between}
+.topbar-left h1{font-size:26px;font-weight:500;color:#fff;letter-spacing:-.2px;line-height:1.2}
+.topbar-left p{font-size:13px;color:rgba(255,255,255,.55);margin-top:4px}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-top:4px}
+.tb-user{font-size:13px;color:rgba(255,255,255,.7)}
+.tb-btn{background:transparent;border:1.5px solid rgba(255,255,255,.4);color:#fff;padding:6px 18px;border-radius:20px;font-size:13px;cursor:pointer;font-family:var(--font)}
+.tb-btn:hover{background:rgba(255,255,255,.1)}
+.tb-psi{background:transparent;border:1.5px solid rgba(255,255,255,.4);color:#fff;padding:6px 18px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:6px}
+.tb-psi:hover{background:rgba(255,255,255,.1)}
+
+/* INNER NAV */
+.inner-nav{background:var(--ps);padding:14px 40px;display:none;align-items:center;gap:12px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.inner-home{background:transparent;border:1.5px solid rgba(255,255,255,.4);color:#fff;padding:5px 16px;border-radius:20px;font-size:12px;cursor:pointer;font-family:var(--font)}
+.inner-home:hover{background:rgba(255,255,255,.1)}
+.inner-srch-wrap{display:flex;align-items:center;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:5px 14px;gap:6px}
+.inner-srch{background:none;border:none;outline:none;font-size:12px;font-family:var(--font);color:#fff;width:180px}
+.inner-srch::placeholder{color:rgba(255,255,255,.4)}
+.inner-pill{background:rgba(255,255,255,.12);padding:4px 12px;border-radius:20px;font-size:11px;color:#fff}
+
+/* HERO SEARCH */
+.hero-bar{background:var(--ps);padding:0 40px 24px;display:flex;align-items:center;gap:14px}
+.hero-srch-wrap{flex:1;max-width:480px;display:flex;align-items:center;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);border-radius:24px;padding:8px 18px;gap:8px}
+.hero-srch{background:none;border:none;outline:none;font-size:14px;font-family:var(--font);color:#fff;width:100%}
+.hero-srch::placeholder{color:rgba(255,255,255,.4)}
+.hero-pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:7px 16px;border-radius:20px;font-size:12px}
+.hero-manage{background:transparent;border:1.5px solid rgba(255,255,255,.35);color:#fff;padding:7px 16px;border-radius:20px;font-size:12px;cursor:pointer;font-family:var(--font)}
+.hero-manage:hover{background:rgba(255,255,255,.1)}
+
+/* BREADCRUMB */
+.bc{background:var(--white);border-bottom:1px solid var(--border);padding:9px 40px;display:none;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.bc a{color:var(--ps2);cursor:pointer;font-weight:500}.bc a:hover{text-decoration:underline}.bc-sep{color:#c9c0e0}
+
+/* MAIN CONTENT */
+.wrap{max-width:1200px;margin:0 auto;padding:32px 40px}
+.section-intro{font-size:13px;color:var(--muted);margin-bottom:28px}
+
+/* TILES - matches PS AI Tools cards exactly */
+.grid{display:grid;gap:20px}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+.tile{background:var(--white);border-radius:var(--r);padding:28px;cursor:pointer;transition:all .18s;box-shadow:0 1px 4px rgba(80,45,127,.06);border:1px solid rgba(80,45,127,.08);display:flex;flex-direction:column;gap:16px}
+.tile:hover{box-shadow:0 6px 24px rgba(80,45,127,.13);transform:translateY(-2px)}
+.tile-top{display:flex;align-items:flex-start;gap:20px}
+.tile-icon-sq{width:80px;height:80px;min-width:80px;border-radius:12px;background:var(--psl);display:flex;align-items:center;justify-content:center;font-size:36px}
+.tile-text{flex:1}
+.tile-name{font-size:17px;font-weight:500;color:var(--ps2);margin-bottom:6px;line-height:1.3}
+.tile-desc{font-size:13px;color:var(--muted);line-height:1.6}
+.tile-cta{background:var(--ps);color:#fff;border:none;border-radius:6px;padding:11px 20px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:6px;transition:background .15s;width:fit-content}
+.tile-cta:hover{background:var(--ps2)}
+.tile-cta-arr{font-size:14px}
+
+/* BACK BAR */
+.back-bar{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.back-btn{background:var(--white);border:1.5px solid var(--border);color:var(--ps);font-size:13px;cursor:pointer;padding:7px 16px;border-radius:8px;font-family:var(--font)}
+.back-btn:hover{background:var(--psl)}
+.page-title{font-size:20px;font-weight:500;color:var(--text)}
+.page-count{font-size:12px;color:var(--muted);margin-top:2px}
+.tile-av{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
+.btn-sm{border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#15803d}
+.btn-grey{background:#e5e7eb;color:#374151}.btn-grey:hover{background:#d1d5db}
+.btn-ps{background:var(--ps);color:#fff}.btn-ps:hover{background:var(--ps2)}
+
+/* DOC ROWS */
+.doc-list{display:flex;flex-direction:column;gap:8px}
+.doc-row{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;transition:all .15s}
+.doc-row:hover{border-color:#c8b8e8;box-shadow:0 2px 8px rgba(80,45,127,.08)}
+.ext-b{border-radius:4px;padding:3px 0;font-size:9px;font-weight:700;width:38px;text-align:center;flex-shrink:0}
+.doc-name{flex:1;font-size:13px;font-weight:400;min-width:0;color:var(--text)}
+.doc-acts{display:flex;gap:8px;flex-shrink:0}
+.btn-dl,.btn-open{background:var(--green);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.btn-dl:hover,.btn-open:hover{background:#15803d}
+.sr-cat{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* OVERLAYS */
+.overlay{position:fixed;inset:0;background:rgba(10,5,25,.55);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.card,.modal{background:var(--white);border-radius:14px;padding:32px;width:100%;max-width:480px;box-shadow:0 24px 60px rgba(0,0,0,.2)}
+.card h3,.modal h3{font-size:17px;font-weight:600;color:var(--ps);margin-bottom:6px}
+.card p,.modal p{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.inp{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);outline:none;margin-bottom:10px;transition:border-color .15s}
+.inp:focus{border-color:var(--ps2);box-shadow:0 0 0 3px rgba(80,45,127,.08)}
+.pw-inp{text-align:center;letter-spacing:4px;font-size:18px}
+select.inp{cursor:pointer}
+.admin-panel{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px}
+.del-list{display:flex;flex-direction:column;gap:5px;max-height:250px;overflow-y:auto;margin-top:10px}
+.del-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border-radius:8px;font-size:12px}
+.del-row span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* DOWNLOAD PANEL */
+.dl-panel{background:var(--white);border-radius:14px;width:100%;max-width:560px;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.2);overflow:hidden}
+.dl-panel-head{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.dl-panel-head h3{font-size:15px;font-weight:600;color:var(--ps)}
+.dl-panel-head p{font-size:11px;color:var(--muted);margin-top:3px}
+.dl-panel-list{overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.dl-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+.dl-item-name{flex:1;font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dl-item-btn{flex-shrink:0;background:var(--green);color:#fff;border:none;border-radius:6px;padding:5px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font)}
+
+/* CHAT PSI */
+#psi-panel{position:fixed;right:0;top:0;bottom:0;width:420px;background:var(--white);z-index:500;display:none;flex-direction:column;box-shadow:-4px 0 32px rgba(0,0,0,.14);border-left:1px solid var(--border)}
+#psi-panel.open{display:flex}
+.psi-head{background:var(--ps);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.psi-head-left{display:flex;align-items:center;gap:10px}
+.psi-logo{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.psi-head-title{font-size:14px;font-weight:600;color:#fff;font-family:var(--font)}
+.psi-head-sub{font-size:10px;color:rgba(255,255,255,.55);font-family:var(--font);margin-top:1px}
+.psi-close{background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:22px;line-height:1;padding:2px 6px}
+.psi-close:hover{color:#fff}
+.psi-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
+.psi-msg{display:flex;flex-direction:column;gap:3px;max-width:92%}
+.psi-msg.user{align-self:flex-end;align-items:flex-end}
+.psi-msg.ai{align-self:flex-start;align-items:flex-start}
+.psi-bubble{padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.55;font-family:var(--font)}
+.psi-msg.user .psi-bubble{background:var(--ps);color:#fff;border-bottom-right-radius:4px}
+.psi-msg.ai .psi-bubble{background:var(--white);color:var(--text);border:1px solid var(--border);border-bottom-left-radius:4px}
+.psi-label{font-size:10px;color:var(--muted);font-family:var(--font);padding:0 4px;display:flex;align-items:center;gap:6px}
+.psi-edit-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:10px;padding:0;font-family:var(--font);text-decoration:underline}
+.psi-edit-wrap{margin-top:4px;display:flex;gap:6px;align-items:center}
+.psi-edit-inp{flex:1;border:1.5px solid var(--ps2);border-radius:8px;padding:6px 10px;font-size:12px;font-family:var(--font);outline:none}
+.psi-edit-save{background:var(--ps);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.psi-edit-cancel{background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;font-family:var(--font);text-decoration:underline}
+.psi-typing{display:flex;gap:4px;align-items:center;padding:12px 14px}
+.psi-dot{width:7px;height:7px;background:#c4b8e0;border-radius:50%;animation:psiDot 1.2s infinite}
+.psi-dot:nth-child(2){animation-delay:.2s}.psi-dot:nth-child(3){animation-delay:.4s}
+@keyframes psiDot{0%,80%,100%{transform:scale(.8);opacity:.5}40%{transform:scale(1.2);opacity:1}}
+.psi-foot{padding:12px 16px;border-top:1px solid var(--border);background:var(--white);flex-shrink:0;display:flex;gap:8px;align-items:flex-end}
+.psi-input{flex:1;border:1.5px solid var(--border);border-radius:20px;padding:9px 16px;font-size:13px;font-family:var(--font);outline:none;resize:none;line-height:1.45;max-height:120px;overflow-y:auto}
+.psi-input:focus{border-color:var(--ps2);box-shadow:0 0 0 3px rgba(80,45,127,.08)}
+.psi-send{background:var(--ps);border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.psi-send:hover{background:var(--ps2)}.psi-send:disabled{background:#c4b8e0;cursor:not-allowed}
+.psi-disclaimer{font-size:10px;color:var(--muted);text-align:center;padding:6px 16px 4px;font-family:var(--font);flex-shrink:0}
+
+/* FOOTER */
+.footer{background:var(--ps);color:rgba(255,255,255,.5);padding:20px 40px;margin-top:60px;text-align:center;font-size:12px}
+.footer-reg{background:rgba(0,0,0,.15);padding:10px 40px;font-size:10px;color:rgba(255,255,255,.35);text-align:center}
+
+@media(max-width:900px){.g3{grid-template-columns:repeat(2,1fr)}.wrap,.topbar,.hero-bar,.footer{padding-left:20px;padding-right:20px}}
+@media(max-width:600px){.g3,.g4,.g2{grid-template-columns:1fr}.tile-top{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD OVERLAY -->
+<div class="overlay" id="pw-overlay" style="display:none" onclick="if(event.target===this)closePw()">
+  <div class="modal">
+    <div style="width:52px;height:52px;background:var(--ps);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#fff;margin-bottom:16px">PS</div>
+    <h3>Admin Access</h3>
+    <p>Enter your password to manage and delete documents</p>
+    <input class="inp pw-inp" id="pw-inp" type="password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" onkeydown="if(event.key==='Enter')checkPw();if(event.key==='Escape')closePw()" autocomplete="off"/>
+    <div id="pw-err" style="font-size:12px;color:#dc2626;margin-bottom:12px;min-height:16px"></div>
+    <button onclick="checkPw()" class="btn-sm btn-ps" style="width:100%;padding:12px;font-size:14px">Unlock</button>
+  </div>
+</div>
+
+<!-- DOWNLOAD PANEL -->
+<div class="overlay" id="dl-overlay" style="display:none" onclick="if(event.target===this)closeDl()">
+  <div class="dl-panel">
+    <div class="dl-panel-head">
+      <div><h3 id="dl-title">Download documents</h3><p id="dl-sub">Click each button to download</p></div>
+      <button onclick="closeDl()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:22px;line-height:1">&#10005;</button>
+    </div>
+    <div class="dl-panel-list" id="dl-list"></div>
+  </div>
+</div>
+
+<!-- HEADER - matches PS AI Tools exactly -->
+<div class="topbar">
+  <div class="topbar-left">
+    <h1>Pocock Sanders Document Library</h1>
+    <p>Internal document directory</p>
+  </div>
+  <div class="topbar-right">
+    <span class="tb-user">Jal Aiyer</span>
+    <button class="tb-btn" onclick="openAdmin()">&#9881; Manage</button>
+  </div>
+</div>
+
+<!-- HERO SEARCH (home page only) -->
+<div id="hero-wrap">
+  <div class="hero-bar">
+    <div class="hero-srch-wrap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity=".5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="hero-srch" id="hero-srch" type="text" placeholder="Search all documents&#8230;" oninput="onHS()" autocomplete="off"/>
+    </div>
+    <div class="hero-pill" id="hero-pill"></div>
+    <button class="hero-manage" onclick="openAdmin()">&#9881; Manage</button>
+  </div>
+</div>
+
+<!-- INNER NAV (category pages) -->
+<div class="inner-nav" id="inner-nav">
+  <button class="inner-home" onclick="goHome()">&#8962; Home</button>
+  <div class="inner-srch-wrap">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity=".5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="inner-srch" id="srch" type="text" placeholder="Search&#8230;" oninput="onS()" autocomplete="off"/>
+  </div>
+  <span class="inner-pill" id="nav-pill-inner"></span>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="bc" id="bc"></div>
+
+<!-- MAIN CONTENT -->
+<div class="wrap" id="main"></div>
+
+<!-- FOOTER -->
+<footer class="footer">Pocock Sanders</footer>
+<div class="footer-reg">
+  Pocock Sanders Limited is an Appointed Representative of ValidPath Financial Limited, authorised and regulated by the Financial Conduct Authority. FRN: 530924. Registered in England &amp; Wales No. 07340110
+</div>
+
+<script>
+
+
+
+
+
+const L=[
+ {id:'iht',name:'IHT Planning',icon:'🏛',color:'#5b21b6',subs:[
+  {id:'iht-bpr',name:'Business Property Relief',icon:'📊',color:'#5b21b6',subs:[
+   {id:'iht-fits',name:'Foresight ITS',av:'FI',color:'#0d9488',docs:[
+    {n:'Foresight ITS - Application Form.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight ITS/Foresight ITS - Application Form.pdf'},
+    {n:'Foresight ITS - Factsheet.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight ITS/Foresight ITS - Factsheet.pdf'},
+    {n:'Foresight ITS - Investor Guide.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight ITS/Foresight ITS - Investor Guide.pdf'},
+    {n:'Foresight ITS - Product Summary.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight ITS/Foresight ITS - Product Summary.pdf'},
+    {n:'Foresight ITS - Reasons to Invest.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight ITS/Foresight ITS - Reasons to Invest.pdf'},
+    {n:'KID - August 2025.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight ITS/Technincal Docs for SR Files/foresight-its-kid-august-2025.pdf'},
+    {n:'Fair Value Assessment - July 2025.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight ITS/Technincal Docs for SR Files/foresight-its-confirmation-of-fair-value-assessment-july-2025.pdf'},
+    {n:'SDR Consumer Disclosure.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight ITS/Technincal Docs for SR Files/sdr-consumer-facing-disclosure-iht-fund-1.pdf'},
+   ]},
+   {id:'iht-faits',name:'Foresight Accelerated ITS',av:'FA',color:'#0d9488',docs:[
+    {n:'Foresight Accelerated ITS - Application Form.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight Accelerated ITS/Foresight Accelerated ITS - Application Form.pdf'},
+    {n:'Foresight Accelerated ITS - Factsheet.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight Accelerated ITS/Foresight Accelerated ITS - Factsheet.pdf'},
+    {n:'Foresight Accelerated ITS - Investor Guide.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight Accelerated ITS/Foresight Accelerated ITS - Investor Guide.pdf'},
+    {n:'Foresight Accelerated ITS - Product Summary.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight Accelerated ITS/Foresight Accelerated ITS - Product Summary.pdf'},
+    {n:'KID - Category A (Aug 2025).pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight Accelerated ITS/Technincal Docs for SR Files/foresight-aits-kid-single-life-cover-category-a-august-2025.pdf'},
+    {n:'KID - Category B (Aug 2025).pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight Accelerated ITS/Technincal Docs for SR Files/foresight-aits-kid-single-life-cover-category-b-august-2025.pdf'},
+    {n:'Fair Value Assessment.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight Accelerated ITS/Technincal Docs for SR Files/confirmation-of-fair-value-assessment-foresight-aits.pdf'},
+    {n:'SDR Consumer Disclosure.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Foresight Accelerated ITS/Technincal Docs for SR Files/sdr-consumer-facing-disclosure-iht-fund.pdf'},
+   ]},
+   {id:'iht-feits',name:'Foresight Enhanced ITS',av:'FE',color:'#0d9488',docs:[
+    {n:'Foresight Enhanced ITS - Application Form.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Enhanced ITS/Foresight Enhanced ITS - Application Form.pdf'},
+    {n:'Foresight Enhanced ITS - Investor Guide.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Enhanced ITS/Foresight Enhanced ITS - Investor Guide.pdf'},
+    {n:'Foresight Enhanced ITS - Product Summary.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Enhanced ITS/Foresight Enhanced ITS - Product Summary.pdf'},
+    {n:'KID.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Enhanced ITS/Technincal Docs for SR Files/foresight-enhanced-iht-fund-kid.pdf'},
+    {n:'Fair Value Assessment.pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Enhanced ITS/Technincal Docs for SR Files/foresight-enhanced-iht-confirmation-of-fair-value-assessment.pdf'},
+    {n:'SDR Consumer Disclosure (May 2025).pdf',p:'Client Ideas/IHT Planning/BPR/Foresight/Enhanced ITS/Technincal Docs for SR Files/foresight-enhanced-iht-sdr-consumer-facing-document-may-2025.pdf'},
+   ]},
+   {id:'iht-oct',name:'Octopus',av:'OC',color:'#dc2626',docs:[
+    {n:'Octopus AIM IHS - Application Form.pdf',p:'Client Ideas/IHT Planning/BPR/Octopus/Octopus AIM IHS - Application Form.pdf'},
+    {n:'Octopus AIM IHS - Brochure.pdf',p:'Client Ideas/IHT Planning/BPR/Octopus/Octopus AIM IHS - Brochure.pdf'},
+    {n:'Octopus AIM IHS - Factsheet.pdf',p:'Client Ideas/IHT Planning/BPR/Octopus/Octopus AIM IHS - Factsheet.pdf'},
+    {n:'Octopus AIM IHS - Product Overview.pdf',p:'Client Ideas/IHT Planning/BPR/Octopus/Octopus AIM IHS - Product Overview.pdf'},
+    {n:'Octopus AIM ISA - Application & Transfer Form.pdf',p:'Client Ideas/IHT Planning/BPR/Octopus/Octopus AIM ISA - Application & Transfer Form.pdf'},
+    {n:'Octopus AIM ISA - Brochure.pdf',p:'Client Ideas/IHT Planning/BPR/Octopus/Octopus AIM ISA - Brochure.pdf'},
+    {n:'Octopus AIM ISA - Product Overview.pdf',p:'Client Ideas/IHT Planning/BPR/Octopus/Octopus AIM ISA - Product Overview.pdf'},
+    {n:'Octopus IHS - Application Form.pdf',p:'Client Ideas/IHT Planning/BPR/Octopus/Octopus IHS - Application Form.pdf'},
+    {n:'Octopus IHS - Brochure.pdf',p:'Client Ideas/IHT Planning/BPR/Octopus/Octopus IHS - Brochure.pdf'},
+    {n:'Octopus IHS - Factsheet.pdf',p:'Client Ideas/IHT Planning/BPR/Octopus/Octopus IHS - Factsheet.pdf'},
+    {n:'Octopus IHS - Product Overview.pdf',p:'Client Ideas/IHT Planning/BPR/Octopus/Octopus IHS - Product Overview.pdf'},
+    {n:'Octopus IHS - Terms & Conditions.pdf',p:'Client Ideas/IHT Planning/BPR/Octopus/Octopus IHS - Terms & Conditions.pdf'},
+    {n:'Octopus IHS - Underlying Investments.pdf',p:'Client Ideas/IHT Planning/BPR/Octopus/Octopus IHS - Underlying Investments.pdf'},
+   ]},
+   {id:'iht-dow',name:'Downing',av:'DW',color:'#1d4ed8',docs:[
+    {n:'AIM Estate Planning Service - Brochure.pdf',p:'Client Ideas/IHT Planning/BPR/Downing/AIM Estate Planning Service - Brochure.pdf'},
+    {n:'AIM Estate Planning Service - Fact Sheet.pdf',p:'Client Ideas/IHT Planning/BPR/Downing/AIM Estate Planning Service - Fact Sheet.pdf'},
+    {n:'AIM Estate Planning Service - Terms & Conditions.pdf',p:'Client Ideas/IHT Planning/BPR/Downing/AIM Estate Planning Service - Terms & Conditions.pdf'},
+    {n:'Estate Planning Service - Life Cover Brochure.pdf',p:'Client Ideas/IHT Planning/BPR/Downing/Estate Planning Service - Life Cover Brochure.pdf'},
+    {n:'Estate Planning Service - Terms & Conditions.pdf',p:'Client Ideas/IHT Planning/BPR/Downing/Estate Planning Service - Terms & Conditions.pdf'},
+    {n:'Estate Planning Service - Wealth Guard.pdf',p:'Client Ideas/IHT Planning/BPR/Downing/Estate Planning Service - Wealth Guard.pdf'},
+    {n:'Growth Estate Planning Service - Brochure.pdf',p:'Client Ideas/IHT Planning/BPR/Downing/Growth Estate Planning Service - Brochure.pdf'},
+    {n:'Growth Estate Planning Service - Terms & Conditions.pdf',p:'Client Ideas/IHT Planning/BPR/Downing/Growth Estate Planning Service - Terms & Conditions.pdf'},
+   ]},
+   {id:'iht-puma',name:'Puma',av:'PU',color:'#7c3aed',docs:[
+    {n:'Puma AIM ISA - Application Form.pdf',p:'Client Ideas/IHT Planning/BPR/Puma/Puma AIM ISA - Application Form.pdf'},
+    {n:'Puma AIM ISA - Client Guide.pdf',p:'Client Ideas/IHT Planning/BPR/Puma/Puma AIM ISA - Client Guide.pdf'},
+    {n:'Puma AIM ISA - Investment Overview.pdf',p:'Client Ideas/IHT Planning/BPR/Puma/Puma AIM ISA - Investment Overview.pdf'},
+    {n:'Puma AIM ISA - Q3 Report.pdf',p:'Client Ideas/IHT Planning/BPR/Puma/Puma AIM ISA - Q3 Report.pdf'},
+   ]},
+   {id:'iht-ing',name:'Ingenious',av:'IN',color:'#b45309',docs:[
+    {n:'Ingenious Brochure & Client Agreement.pdf',p:'Client Ideas/IHT Planning/BPR/Ingenious/Ingenious Brochure & Client Agreement.pdf'},
+    {n:'Ingenious IEP Class & IEP Classic Cover.pdf',p:'Client Ideas/IHT Planning/BPR/Ingenious/Ingenious IEP Class & IEP Classic Cover.pdf'},
+   ]},
+  ]},
+  {id:'iht-dgt',name:'Discounted Gift Trust',icon:'🎁',color:'#502D7F',subs:[
+   {id:'iht-pru-dgt',name:'Prudential DGT',av:'PR',color:'#502D7F',docs:[
+    {n:'Guide to Discounted Gift Trust.pdf',p:'Client Ideas/IHT Planning/DGT/Prudential DGT/Guide to Discounted Gift Trust.pdf'},
+    {n:'Prudential Guide to Estate Planning.pdf',p:'Client Ideas/IHT Planning/DGT/Prudential DGT/Prudential Guide to Estate Planning.pdf'},
+    {n:'Prudential Guide to Trusts.pdf',p:'Client Ideas/IHT Planning/DGT/Prudential DGT/Prudential Guide to Trusts.pdf'},
+    {n:'Prudential DGT - Trust Deed.pdf',p:'Client Ideas/IHT Planning/DGT/Prudential DGT/Prudential DGT - Trust Deed.pdf'},
+    {n:'Prudential DGT - Tele Interview Form (under 80).pdf',p:'Client Ideas/IHT Planning/DGT/Prudential DGT/Prudential DGT - Tele Interview Form (under 80 only).pdf'},
+    {n:'Prudential DGT - Declaration of Health Form (over 80).pdf',p:'Client Ideas/IHT Planning/DGT/Prudential DGT/Prudential DGT - Declaration of Health Form (over 80).pdf'},
+    {n:'Prudential TRS Completion Guide.pdf',p:'Client Ideas/IHT Planning/DGT/Prudential DGT/Prudential TRS Completion Guide.pdf'},
+    {n:'TRS - Adviser Support.pdf',p:'Client Ideas/IHT Planning/DGT/Prudential DGT/TRS - Adviser Support.pdf'},
+    {n:'Prudential DGT Calculator (Web)',p:'https://www.mandg.com/pru/tools-calculators/dgt/index.html'},
+   ]},
+   {id:'iht-q-dgt',name:'Quilter DGT',av:'QU',color:'#1d4ed8',docs:[
+    {n:'Guide to the Discounted Gift Trust.pdf',p:'Client Ideas/IHT Planning/DGT/Quilter DGT/23387-guide-to-the-discounted-gift-trust.pdf'},
+    {n:'Quilter DGT - How it Can Help You.pdf',p:'Client Ideas/IHT Planning/DGT/Quilter DGT/Quilter DGT - How it can help you.pdf'},
+    {n:'Quilter DGT - Reasons Why.pdf',p:'Client Ideas/IHT Planning/DGT/Quilter DGT/Quilter DGT - Reasons Why.pdf'},
+    {n:'Quilter DGT - Trust Deed.pdf',p:'Client Ideas/IHT Planning/DGT/Quilter DGT/Quilter DGT - Trust Deed.pdf'},
+    {n:'Quilter Discount Calculator.xlsx',p:'Client Ideas/IHT Planning/DGT/Quilter DGT/Quilter Discount Calculator.xlsx'},
+   ]},
+   {id:'iht-av-dgt',name:'Aviva DGT',av:'AV',color:'#ea580c',docs:[
+    {n:'Aviva DGT - Customer Guide.pdf',p:'Client Ideas/IHT Planning/DGT/Aviva DGT/Aviva DGT - Customer Guide.pdf'},
+    {n:'Aviva DGT - Trust Deed.pdf',p:'Client Ideas/IHT Planning/DGT/Aviva DGT/Aviva DGT - Trust Deed.pdf'},
+    {n:'Aviva DGT - Underwriting Form.pdf',p:'Client Ideas/IHT Planning/DGT/Aviva DGT/Aviva DGT - Underwriting Form.pdf'},
+   ]},
+  ]},
+  {id:'iht-wol',name:'Whole of Life',icon:'🛡',color:'#1d4ed8',subs:[
+   {id:'iht-rl',name:'Royal London',av:'RL',color:'#c0392b',docs:[
+    {n:'Royal London WOL - Application Form.pdf',p:'Client Ideas/IHT Planning/WoL/Royal London/Royal London WOL - Application Form.pdf'},
+    {n:'Royal London WOL - Client Guide.pdf',p:'Client Ideas/IHT Planning/WoL/Royal London/Royal London WOL - Client Guide.pdf'},
+    {n:'Royal London WOL - Data Capture Form.pdf',p:'Client Ideas/IHT Planning/WoL/Royal London/Royal London WOL - Data Capture Form.pdf'},
+    {n:'Royal London WOL - Key Facts.pdf',p:'Client Ideas/IHT Planning/WoL/Royal London/Royal London WOL - Key Facts.pdf'},
+    {n:'Royal London WOL - Plan Details.pdf',p:'Client Ideas/IHT Planning/WoL/Royal London/Royal London WOL - Plan Details.pdf'},
+    {n:'Royal London WOL - Access to Medical Reports.pdf',p:'Client Ideas/IHT Planning/WoL/Royal London/Royal London WOL - Access to Medical Reports Declaration.pdf'},
+    {n:'Royal London WOL - The Need for WOL.pdf',p:'Client Ideas/IHT Planning/WoL/Royal London/Royal London WOL - The Need for WOL.pdf'},
+   ]},
+   {id:'iht-lg-wol',name:'L&G',av:'LG',color:'#1d4ed8',docs:[
+    {n:'L&G WOL - Application Form (Business Protection).pdf',p:'Client Ideas/IHT Planning/WoL/L&G/L&G WOL - Application Form (Business Protection).pdf'},
+    {n:'L&G WOL - Application Form OLP.pdf',p:'Client Ideas/IHT Planning/WoL/L&G/L&G WOL - Application Form OLP.pdf'},
+    {n:'L&G WOL - Product Summary.pdf',p:'Client Ideas/IHT Planning/WoL/L&G/L&G WOL - Product Summary.pdf'},
+    {n:'L&G WOL - Terms and Conditions.pdf',p:'Client Ideas/IHT Planning/WoL/L&G/L&G WOL - Terms and Conditions.pdf'},
+   ]},
+   {id:'iht-vit',name:'VitalityLife',av:'VL',color:'#ea580c',docs:[
+    {n:'Whole of Life - Brochure.pdf',p:'Client Ideas/IHT Planning/WoL/VitalityLife/Whole of Life Brochure.pdf'},
+    {n:'Whole of Life Cover - Client Guide.pdf',p:'Client Ideas/IHT Planning/WoL/VitalityLife/Whole of Life Cover Client.pdf'},
+    {n:'Plan Provisions.pdf',p:'Client Ideas/IHT Planning/WoL/VitalityLife/Plan Provisions.pdf'},
+    {n:'Plan Summary.pdf',p:'Client Ideas/IHT Planning/WoL/VitalityLife/Plan Summary.pdf'},
+    {n:'Vitality WoL Optimiser Explained.pdf',p:'Client Ideas/IHT Planning/WoL/VitalityLife/Vitality WoL Optimiser Explained.pdf'},
+    {n:'WOL GIO.pdf',p:'Client Ideas/IHT Planning/WoL/VitalityLife/WOL GIO.pdf'},
+    {n:'Medical Requirements Underwriting Table.pdf',p:'Client Ideas/IHT Planning/WoL/VitalityLife/Medical Requirements Underwriting Table.pdf'},
+    {n:'Lifestyle Care Cover Sales Aid.pdf',p:'Client Ideas/IHT Planning/WoL/VitalityLife/Lifestyle Care Cover Sales Aid.pdf'},
+    {n:'Making the Most of Vitality.pdf',p:'Client Ideas/IHT Planning/WoL/VitalityLife/Making the Most of Vitality.pdf'},
+    {n:'VP Rewards and Status Overview.pdf',p:'Client Ideas/IHT Planning/WoL/VitalityLife/VP rewards and status overview.pdf'},
+    {n:'Supplementary Financial Questionnaire 2025.pdf',p:'Client Ideas/IHT Planning/WoL/VitalityLife/VitalityLife Supplementary Finanical Questionnaire v.2 2025.pdf'},
+    {n:'Quick Guide to Rysaffe and Life Policies.pdf',p:'Client Ideas/IHT Planning/WoL/VitalityLife/A Quick Guide to Rysaffe and Life Policies.pdf'},
+    {n:'WOL Calculator - Dec 25.xlsx',p:'Client Ideas/IHT Planning/WoL/VitalityLife/WOL Calculator - Dec 25.xlsx'},
+   ]},
+   {id:'iht-zur',name:'Zurich',av:'ZU',color:'#502D7F',docs:[
+    {n:'Zurich WOL - Data Capture Form.pdf',p:'Client Ideas/IHT Planning/WoL/Zurich/Zurich WOL - Data Capture Form.pdf'},
+    {n:'Zurich WOL - Key Features.pdf',p:'Client Ideas/IHT Planning/WoL/Zurich/Zurich WOL - Key Features.pdf'},
+    {n:'Zurich WOL - Terms and Conditions.pdf',p:'Client Ideas/IHT Planning/WoL/Zurich/Zurich WOL - Terms and Conditions.pdf'},
+    {n:'WOL Calculator.xlsx',p:'Client Ideas/IHT Planning/WoL/Zurich/WOL_Calculator.xlsx'},
+   ]},
+  ]},
+  {id:'iht-wp',name:'Wealth Preservation',av:'WP',color:'#0369a1',docs:[
+   {n:'Canada Life WPA - Application Form.pdf',p:'Client Ideas/IHT Planning/Wealth Preservation/Canada Life Wealth Preservation Account - Applcation Form.pdf'},
+   {n:'Canada Life WPA - Client Guide.pdf',p:'Client Ideas/IHT Planning/Wealth Preservation/Canada Life Wealth Preservation Account - Client Guide.pdf'},
+   {n:'Canada Life WPA - Policy Provisions.pdf',p:'Client Ideas/IHT Planning/Wealth Preservation/Canada Life Wealth Preservation Account - Policy Provisions.pdf'},
+   {n:'Canada Life WPA - Trust Deed.pdf',p:'Client Ideas/IHT Planning/Wealth Preservation/Canada Life Wealth Preservation Account - Trust Deed.pdf'},
+   {n:'Canada Life WPA - Trust Support Guide.pdf',p:'Client Ideas/IHT Planning/Wealth Preservation/Canada Life Wealth Preservation Account - Trust Support Guide.pdf'},
+  ]},
+  {id:'iht-pla',name:'Purchased Life Annuity',icon:'💵',color:'#0d9488',subs:[
+   {id:'iht-av-pla',name:'Aviva',av:'AV',color:'#ea580c',docs:[
+    {n:'Aviva Immediate Life Annuity - Application Form.pdf',p:'Client Ideas/IHT Planning/Purchased Life Annuity/Aviva/Aviva Immediete Life Annuity - Application Form.pdf'},
+    {n:'Aviva Immediate Life Annuity - Key Features.pdf',p:'Client Ideas/IHT Planning/Purchased Life Annuity/Aviva/Aviva Immediete Life Annuity - Key Features.pdf'},
+    {n:'Aviva Immediate Life Annuity - Terms and Conditions.pdf',p:'Client Ideas/IHT Planning/Purchased Life Annuity/Aviva/Aviva Immediete Life Annuity - Terms and Conditions.pdf'},
+   ]},
+   {id:'iht-cl-pla',name:'Canada Life',av:'CL',color:'#c0392b',docs:[
+    {n:'Canada Life PLA - Key Features.pdf',p:'Client Ideas/IHT Planning/Purchased Life Annuity/Canada Life/Canada Life Purchased Life Annuity - Key Features.pdf'},
+    {n:'Canada Life PLA - Policy Provisions.pdf',p:'Client Ideas/IHT Planning/Purchased Life Annuity/Canada Life/Canada Life Purchased Life Annuity - Policy Provisions.pdf'},
+    {n:'Canada Life PLA - Product Details.pdf',p:'Client Ideas/IHT Planning/Purchased Life Annuity/Canada Life/Canada Life Purchased Life Annuity - Product Details.pdf'},
+   ]},
+  ]},
+  {id:'iht-rys',name:'Rysaffe Planning',av:'RY',color:'#374151',docs:[
+   {n:'L&G Presentation for Pocock Rutherford.pdf',p:'Client Ideas/IHT Planning/Rysaffe Planning (large JLSD)/L&G Presentation for Pocock Rutherford.pdf'},
+   {n:'Rysaffe (Zurich).docx',p:'Client Ideas/IHT Planning/Rysaffe Planning (large JLSD)/Rysaffe (Zurich).docx'},
+  ]},
+ ]},
+ {id:'ann',name:'Annuities',icon:'📆',color:'#0d9488',subs:[
+  {id:'ann-cl',name:'Canada Life FTIP',av:'CL',color:'#c0392b',docs:[
+   {n:'Canada Life FTIP - Application Form.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Canada Life/Canada Life FTIP - Application Form.pdf'},
+   {n:'Canada Life FTIP - Client Guide.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Canada Life/Canada Life FTIP - Client Guide.pdf'},
+   {n:'Canada Life FTIP - Key Features.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Canada Life/Canada Life FTIP - Key Features.pdf'},
+   {n:'Canada Life FTIP - Policy Provision.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Canada Life/Canada Life FTIP - Policy Provision.pdf'},
+  ]},
+  {id:'ann-lg',name:'L&G FTRP',av:'LG',color:'#1d4ed8',docs:[
+   {n:'L&G FTRP - Application Form.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/L&G/L&G FTRP - Application Form.pdf'},
+   {n:'L&G FTRP - Key Features.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/L&G/L&G FTRP - Key Features.pdf'},
+   {n:'L&G FTRP - Product Summary.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/L&G/L&G FTRP - Product Summary.pdf'},
+   {n:'L&G FTRP - Terms and Conditions.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/L&G/L&G FTRP - Terms and Conditions.pdf'},
+  ]},
+  {id:'ann-lv',name:'LV Fixed Term',av:'LV',color:'#b45309',docs:[
+   {n:'LV FTA - Application Form.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/LV/LV FTA - Application Form.pdf'},
+   {n:'LV FTA - Customer Guide.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/LV/LV FTA - Customer Guide.pdf'},
+   {n:'LV FTA - Key Features.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/LV/LV FTA - Key Features.pdf'},
+   {n:'LV FTA - Plan Conditions.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/LV/LV FTA - Plan Conditions.pdf'},
+  ]},
+  {id:'ann-pru',name:'Prudential – GIP',av:'PR',color:'#502D7F',docs:[
+   {n:'Pru GIP - Adviser Guide.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Prudential/Pru Guaranteed Income Plan - Adviser Guide.pdf'},
+   {n:'Pru GIP - Client Guide.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Prudential/Pru Guaranteed Income Plan - Client Guide.pdf'},
+   {n:'Pru GIP - Death Benefits.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Prudential/Pru Guaranteed Income Plan - Death Benefits.pdf'},
+   {n:'Pru GIP - Fast Facts.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Prudential/Pru Guaranteed Income Plan - Fast Facts.pdf'},
+   {n:'Pru GIP - Key Features.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Prudential/Pru Guaranteed Income Plan - Key Features.pdf'},
+   {n:'Pru GIP - Process Guide.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Prudential/Pru Guaranteed Income Plan - Process Guide.pdf'},
+   {n:'Pru GIP - Terms and Conditions.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Prudential/Pru Guaranteed Income Plan - Terms and Conditions.pdf'},
+   {n:'Pru Guaranteed Income Calculator (Web)',p:'https://www.mandg.com/pru/tools-calculators/guaranteed-income/index.html'},
+  ]},
+  {id:'ann-sl',name:'Standard Life',av:'SL',color:'#1d4ed8',docs:[
+   {n:'SL GFTI - Application Form.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Standard Life/SL Guaranteed Fixed Term Income -  Application Form.pdf'},
+   {n:'SL GFTI - Key Features.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Standard Life/SL Guaranteed Fixed Term Income -  Key Features.pdf'},
+   {n:'SL GFTI - Terms & Conditions.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Standard Life/SL Guaranteed Fixed Term Income -  Terms & Conditions.pdf'},
+   {n:'SL GFTI - Adviser Guide.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Standard Life/SL Guaranteed Fixed Term Income - Adviser Guide.pdf'},
+   {n:'SL Guaranteed Lifetime Income Plan - Adviser Guide.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Standard Life/standard-life-guaranteed-lifetime-income-plan-adviser-guide.pdf'},
+   {n:'SL Guaranteed Lifetime Income Plan - Suitability Wording.pdf',p:'Client Ideas/Annuities/Fixed Term Annuities/Standard Life/standard-life-guaranteed-lifetime-income-plan-suitability-wording.pdf'},
+   {n:'SL Quick Quote Tool (Web)',p:'https://www.standardlife.co.uk/adviser'},
+  ]},
+  {id:'ann-ea',name:'Enhanced Annuity',av:'EA',color:'#0d9488',docs:[
+   {n:'Retirement Health Form.pdf',p:'Client Ideas/Annuities/Enhanced Annuity Questionnaire/Retirement Health Form.pdf'},
+  ]},
+ ]},
+ {id:'newprod',name:'New Products',icon:'✨',color:'#be185d',subs:[
+  {id:'np-av',name:'Aviva Onshore Bond',av:'AB',color:'#ea580c',docs:[
+   {n:'Aviva Onshore Bond - At A Glance.pdf',p:"Client Ideas/New Products/Aviva Onshore Bond/Aviva Onshore Bond - At A Glance.pdf"},
+   {n:'Aviva Onshore Bond - Client Brochure.pdf',p:"Client Ideas/New Products/Aviva Onshore Bond/Aviva Onshore Bond - Client Brochure.pdf"},
+   {n:"Aviva Onshore Bond - FAQ's.pdf",p:"Client Ideas/New Products/Aviva Onshore Bond/Aviva Onshore Bond - FAQ's.pdf"},
+   {n:'Aviva Platform - Suitability Paragraphs.pdf',p:"Client Ideas/New Products/Aviva Onshore Bond/Aviva Platform - Suitability Paragraphs.pdf"},
+   {n:'Smooth Managed Fund - Customer Guide.pdf',p:"Client Ideas/New Products/Aviva Onshore Bond/Smooth Managed Fund - Customer Guide.pdf"},
+   {n:'Trusts - How to Choose Which Trust.pdf',p:"Client Ideas/New Products/Aviva Onshore Bond/Trusts... How to choose which trust.pdf"},
+  ]},
+  {id:'np-lv',name:'LV Guaranteed Income Drawdown',av:'LV',color:'#b45309',docs:[
+   {n:'LV GID - Adviser Guide.pdf',p:'Client Ideas/New Products/LV Guaranteed Income Drawdown/LV Guaranteed Income Drawdown - Adviser Guide.pdf'},
+   {n:'LV GID - Client Guide.pdf',p:'Client Ideas/New Products/LV Guaranteed Income Drawdown/LV Guaranteed Income Drawdown - Client Guide.pdf'},
+  ]},
+  {id:'np-pru',name:'Prudential Guaranteed Income Plan',av:'PR',color:'#502D7F',docs:[
+   {n:'Guaranteed Income Plan - Adviser Guide.pdf',p:'Client Ideas/New Products/Prudential Guaranteed Income Plan/Guaranteed Income Plan - Adviser Guide.pdf'},
+   {n:'Guaranteed Income Plan - Client Guide.pdf',p:'Client Ideas/New Products/Prudential Guaranteed Income Plan/Guaranteed Income Plan - Client Guide.pdf'},
+   {n:'Guaranteed Income Plan - Death Benefits.pdf',p:'Client Ideas/New Products/Prudential Guaranteed Income Plan/Guaranteed Income Plan - Death Benefits.pdf'},
+   {n:'Guaranteed Income Plan - Fast Facts.pdf',p:'Client Ideas/New Products/Prudential Guaranteed Income Plan/Guaranteed Income Plan - Fast Facts.pdf'},
+   {n:'Guaranteed Income Plan - Key Features.pdf',p:'Client Ideas/New Products/Prudential Guaranteed Income Plan/Guaranteed Income Plan - Key Features.pdf'},
+   {n:'Guaranteed Income Plan - Process Guide.pdf',p:'Client Ideas/New Products/Prudential Guaranteed Income Plan/Guaranteed Income Plan - Process Guide.pdf'},
+   {n:'Guaranteed Income Plan - Terms and Conditions.pdf',p:'Client Ideas/New Products/Prudential Guaranteed Income Plan/Guaranteed Income Plan - Terms and Conditions.pdf'},
+   {n:'Guaranteed Income Calculator (Web)',p:'https://www.mandg.com/pru/tools-calculators/guaranteed-income/index.html'},
+  ]},
+ ]},
+ {id:'prov',name:'Provider Literature',icon:'📚',color:'#1d4ed8',subs:[
+  {id:'prov-pru',name:'Prudential / M&G',icon:'⚙',color:'#502D7F',subs:[
+   {id:'prov-pb',name:'Prudential Bond',av:'PB',color:'#502D7F',docs:[
+    {n:'Prudential Bond - Client Guide.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Bond Literature/Prudential Bond Client Guide.pdf'},
+    {n:'Prudential Bond - Fast Facts.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Bond Literature/Prudential Bond Fast Facts.pdf'},
+    {n:'Prudential Bond - Fund Guide.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Bond Literature/Prudential Bond Fund Guide.pdf'},
+    {n:'Prudential Bond - Key Features.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Bond Literature/Prudential Bond Key Features.pdf'},
+    {n:'Prudential Product and Charges.xlsx',p:'Client Ideas/Provider Literature/Prudential/Bond/Bond Literature/Prudential Product and Charges_.xlsx'},
+    {n:'PruFund - Client Guide.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Bond Literature/PruFund Client Guide.pdf'},
+    {n:'PruFund - Guide to Smoothing.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Bond Literature/PruFund Guide to Smoothing.pdf'},
+    {n:'PruFund - In Numbers.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Bond Literature/PruFund in Numbers.pdf'},
+    {n:'PruFund - Charges.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Bond Literature/PruFund Charges.pdf'},
+    {n:'PruFund - Timeline Performance.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Bond Literature/PruFund Timeline Performance.pdf'},
+    {n:'PruFund - UK Investments.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Bond Literature/PruFund UK investments.pdf'},
+    {n:'Asset Diversification.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Bond Literature/Asset Diversification.pdf'},
+    {n:'Expected Growth Rates.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Bond Literature/Expected Growth Rates.pdf'},
+    {n:'Performance - 5 Year.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Performance/5 Year Performance.pdf'},
+    {n:'Performance - 3 Year Volatility.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Performance/3 Year Volatility.pdf'},
+    {n:'PFC - Performance Since SoD.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Performance/Long-Term Performance/PFC - Performance SoD.pdf'},
+    {n:'PFC - Income Since SoD.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Performance/Long-Term Performance/PFC - Income SoD.pdf'},
+    {n:'PFG - Performance Since SoD.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Performance/Long-Term Performance/PFG - Performance SoD.pdf'},
+    {n:'PFG - Income Since SoD.pdf',p:'Client Ideas/Provider Literature/Prudential/Bond/Performance/Long-Term Performance/PFG - Income SoD.pdf'},
+   ]},
+   {id:'prov-pi',name:'Prudential ISA',av:'PI',color:'#502D7F',docs:[
+    {n:'Prudential ISA - Client Guide.pdf',p:'Client Ideas/Provider Literature/Prudential/ISA/ISA Literature/Prudential ISA Client Guide.pdf'},
+    {n:'Prudential ISA - Fund Guide.pdf',p:'Client Ideas/Provider Literature/Prudential/ISA/ISA Literature/Prudential ISA Fund Guide.pdf'},
+    {n:'Prudential ISA - Key Features.pdf',p:'Client Ideas/Provider Literature/Prudential/ISA/ISA Literature/Prudential ISA Key Features.pdf'},
+    {n:'Prudential ISA - Terms and Conditions.pdf',p:'Client Ideas/Provider Literature/Prudential/ISA/ISA Literature/Prudential ISA Terms and Conditions.pdf'},
+    {n:'Prudential Product and Charges.xlsx',p:'Client Ideas/Provider Literature/Prudential/ISA/ISA Literature/Prudential Product and Charges_.xlsx'},
+    {n:'PruFund - Client Guide.pdf',p:'Client Ideas/Provider Literature/Prudential/ISA/ISA Literature/PruFund Client Guide.pdf'},
+    {n:'PruFund - Guide to Smoothing.pdf',p:'Client Ideas/Provider Literature/Prudential/ISA/ISA Literature/PruFund Guide to Smoothing.pdf'},
+    {n:'PruFund - In Numbers.pdf',p:'Client Ideas/Provider Literature/Prudential/ISA/ISA Literature/PruFund in Numbers.pdf'},
+    {n:'PruFund - Timeline Performance.pdf',p:'Client Ideas/Provider Literature/Prudential/ISA/ISA Literature/PruFund Timeline Performance.pdf'},
+    {n:'Asset Diversification.pdf',p:'Client Ideas/Provider Literature/Prudential/ISA/ISA Literature/Asset Diversification.pdf'},
+    {n:'Expected Growth Rates.pdf',p:'Client Ideas/Provider Literature/Prudential/ISA/ISA Literature/Expected Growth Rates.pdf'},
+    {n:'Performance - 5 Year.pdf',p:'Client Ideas/Provider Literature/Prudential/ISA/Performance/5 Year Performance.pdf'},
+    {n:'Performance - 3 Year Volatility.pdf',p:'Client Ideas/Provider Literature/Prudential/ISA/Performance/3 Year Volatility.pdf'},
+   ]},
+   {id:'prov-pra',name:'Prudential Retirement Account',av:'RA',color:'#502D7F',docs:[
+    {n:'Prudential Retirement Account - Client Guide.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Pension Literature/Prudential Retirement Account - Client Guide.pdf'},
+    {n:'Prudential Retirement Account - Fast Facts.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Pension Literature/Prudential Retirement Account - Fast Facts.pdf'},
+    {n:'Prudential Retirement Account - Fund Guide.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Pension Literature/Prudential Retirement Account - Fund Guide.pdf'},
+    {n:'Prudential Retirement Account - Key Features.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Pension Literature/Retirement Account Key Features.pdf'},
+    {n:'Prudential Retirement Account - PruFund Smoothing.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Pension Literature/Prudential Retirement Account - PruFund Smoothing.pdf'},
+    {n:'Prudential Retirement Account - Terms and Conditions.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Pension Literature/Prudential Retirement Account - Terms and Conditions.pdf'},
+    {n:'Prudential Product and Charges.xlsx',p:'Client Ideas/Provider Literature/Prudential/Pension/Pension Literature/Prudential Product and Charges_.xlsx'},
+    {n:'PruFund - Client Guide.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Pension Literature/PruFund Client Guide.pdf'},
+    {n:'PruFund - Guide to Smoothing.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Pension Literature/PruFund Guide to Smoothing.pdf'},
+    {n:'PruFund - In Numbers.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Pension Literature/PruFund in Numbers.pdf'},
+    {n:'PruFund - Timeline Performance.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Pension Literature/PruFund Timeline Performance.pdf'},
+    {n:'Asset Diversification.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Pension Literature/Asset Diversification.pdf'},
+    {n:'Expected Growth Rates.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Pension Literature/Expected Growth Rates.pdf'},
+    {n:'Performance - 5 Year.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Performance/5 Year Performance.pdf'},
+    {n:'Performance - 3 Year Volatility.pdf',p:'Client Ideas/Provider Literature/Prudential/Pension/Performance/3 Year Volatility.pdf'},
+   ]},
+  ]},
+  {id:'prov-quilter',name:'Quilter',icon:'🔷',color:'#1d4ed8',subs:[
+   {id:'prov-qb',name:'Quilter Bond',av:'QB',color:'#1d4ed8',docs:[
+    {n:'Introducing you to Quilter.pdf',p:'Client Ideas/Provider Literature/Quilter/Bond/Introducing you to Quilter.pdf'},
+    {n:'Quilter Bond - Key Features.pdf',p:'Client Ideas/Provider Literature/Quilter/Bond/Quilter Bond - Key Features.pdf'},
+    {n:'Quilter Bond - Terms and Conditions.pdf',p:'Client Ideas/Provider Literature/Quilter/Bond/Quilter Bond - Terms of Conditions.pdf'},
+   ]},
+   {id:'prov-qg',name:'Quilter GIA',av:'QG',color:'#1d4ed8',docs:[
+    {n:'Introducing you to Quilter.pdf',p:'Client Ideas/Provider Literature/Quilter/GIA/Introducing you to Quilter.pdf'},
+    {n:'Quilter GIA - Key Features.pdf',p:'Client Ideas/Provider Literature/Quilter/GIA/Quilter GIA - Key Features.pdf'},
+    {n:'Quilter GIA - Terms and Conditions.pdf',p:'Client Ideas/Provider Literature/Quilter/GIA/Quilter GIA - Terms and Conditions.pdf'},
+   ]},
+   {id:'prov-qi',name:'Quilter ISA',av:'QI',color:'#1d4ed8',docs:[
+    {n:'Introducing you to Quilter.pdf',p:'Client Ideas/Provider Literature/Quilter/ISA/Introducing you to Quilter.pdf'},
+    {n:'Quilter ISA - Key Features.pdf',p:'Client Ideas/Provider Literature/Quilter/ISA/Quilter ISA - Key Features.pdf'},
+    {n:'Quilter ISA - Terms and Conditions.pdf',p:'Client Ideas/Provider Literature/Quilter/ISA/Quilter ISA - Terms and Conditions.pdf'},
+   ]},
+   {id:'prov-qp',name:'Quilter Pension',av:'QP',color:'#1d4ed8',docs:[
+    {n:'Introducing you to Quilter.pdf',p:'Client Ideas/Provider Literature/Quilter/Pension/Introducing you to Quilter.pdf'},
+    {n:'Quilter Pension - Key Features.pdf',p:'Client Ideas/Provider Literature/Quilter/Pension/Quilter Pension - Key Features.pdf'},
+    {n:'Quilter Pension - Terms and Conditions.pdf',p:'Client Ideas/Provider Literature/Quilter/Pension/Quilter Pension - Terms and Conditions.pdf'},
+   ]},
+  ]},
+  {id:'prov-aviva',name:'Aviva',icon:'🔶',color:'#ea580c',subs:[
+   {id:'prov-ab',name:'Aviva Bond',av:'AB',color:'#ea580c',docs:[
+    {n:'Aviva Platform - Onshore Bond - At A Glance.pdf',p:'Client Ideas/Provider Literature/Aviva/Bond/Aviva Platform - Onshore Bond - At A Glance.pdf'},
+   ]},
+   {id:'prov-ag',name:'Aviva GIA',av:'AG',color:'#ea580c',docs:[
+    {n:'Aviva GIA - Client Guide.pdf',p:'Client Ideas/Provider Literature/Aviva/GIA/Aviva GIA - Client Guide.pdf'},
+    {n:'Aviva GIA - Key Features.pdf',p:'Client Ideas/Provider Literature/Aviva/GIA/Aviva GIA - Key Features.pdf'},
+    {n:'Aviva GIA - Terms and Conditions.pdf',p:'Client Ideas/Provider Literature/Aviva/GIA/Aviva GIA - Terms and Conditions.pdf'},
+   ]},
+   {id:'prov-ai',name:'Aviva ISA',av:'AI',color:'#ea580c',docs:[
+    {n:'Aviva ISA - Client Guide.pdf',p:'Client Ideas/Provider Literature/Aviva/ISA/Aviva ISA - Client Guide.pdf'},
+    {n:'Aviva ISA - Key Features.pdf',p:'Client Ideas/Provider Literature/Aviva/ISA/Aviva ISA - Key Features.pdf'},
+    {n:'Aviva ISA - Terms and Conditions.pdf',p:'Client Ideas/Provider Literature/Aviva/ISA/Aviva ISA - Terms and Conditions.pdf'},
+   ]},
+   {id:'prov-ap',name:'Aviva Pension',av:'AP',color:'#ea580c',docs:[
+    {n:'Aviva Pension - Client Guide.pdf',p:'Client Ideas/Provider Literature/Aviva/Pension/Aviva Pension - Client Guide.pdf'},
+    {n:'Aviva Pension - Key Features.pdf',p:'Client Ideas/Provider Literature/Aviva/Pension/Aviva Pension - Key Features.pdf'},
+    {n:'Aviva Pension - Terms and Conditions.pdf',p:'Client Ideas/Provider Literature/Aviva/Pension/Aviva Pension - Terms of Conditions.pdf'},
+   ]},
+   {id:'prov-smf',name:'Smooth Managed Fund',av:'SM',color:'#ea580c',docs:[
+    {n:'Smooth Managed Fund - Customer Guide.pdf',p:'Client Ideas/Provider Literature/Aviva/Smoothed Managed Literature/Smooth Managed Fund Customer Guide.pdf'},
+    {n:'Smooth Managed Fund - Presentation January 2026.pdf',p:'Client Ideas/Provider Literature/Aviva/Smoothed Managed Literature/Smooth Managed Fund Presentation January 2026.pdf'},
+   ]},
+  ]},
+  {id:'prov-fidelity',name:'Fidelity',icon:'🟣',color:'#7c3aed',subs:[
+   {id:'prov-fi',name:'Fidelity ISA',av:'FI',color:'#7c3aed',docs:[
+    {n:'Fidelity ISA - Client Terms.pdf',p:'Client Ideas/Provider Literature/Fidelity/ISA/Client Terms.pdf'},
+    {n:'Fidelity ISA - Fast Facts.pdf',p:'Client Ideas/Provider Literature/Fidelity/ISA/Fast Facts.pdf'},
+    {n:'Fidelity ISA - Client Guide.pdf',p:'Client Ideas/Provider Literature/Fidelity/ISA/Fidelity ISA - Client Guide.pdf'},
+    {n:'Fidelity JISA - Client Guide.pdf',p:'Client Ideas/Provider Literature/Fidelity/ISA/Fidelity JISA - Client Guide.pdf'},
+    {n:'Fidelity ISA - Key Features.pdf',p:'Client Ideas/Provider Literature/Fidelity/ISA/Key Features.pdf'},
+   ]},
+   {id:'prov-fp',name:'Fidelity Pension',av:'FP',color:'#7c3aed',docs:[
+    {n:'Fidelity Pension - Client Terms.pdf',p:'Client Ideas/Provider Literature/Fidelity/Pension/Client Terms.pdf'},
+    {n:'Fidelity Pension - Fast Facts.pdf',p:'Client Ideas/Provider Literature/Fidelity/Pension/Fast Facts.pdf'},
+    {n:'Fidelity Pension - Adviser Guide.pdf',p:'Client Ideas/Provider Literature/Fidelity/Pension/Fidelity Pension - Adviser Guide.pdf'},
+    {n:'Fidelity Pension - Client Guide.pdf',p:'Client Ideas/Provider Literature/Fidelity/Pension/Fidelity Pension - Client Guide.pdf'},
+    {n:'Fidelity Pension - Key Features.pdf',p:'Client Ideas/Provider Literature/Fidelity/Pension/Fidelity Pension - Key Features.pdf'},
+    {n:'Fidelity Pension - Product Summary.pdf',p:'Client Ideas/Provider Literature/Fidelity/Pension/Fidelity Pension - Product Summary.pdf'},
+   ]},
+  ]},
+  {id:'prov-cb',name:'Curtis Banks',av:'CB',color:'#374151',docs:[
+   {n:'Curtis Banks & Pointon York Heritage - Schedule of Fees.pdf',p:'Client Ideas/Provider Literature/Curtis Banks/Curtis Banks and Pointon York Heritage Schedule of Fees.pdf'},
+   {n:'Curtis Banks Charges.docx',p:'Client Ideas/Provider Literature/Curtis Banks/Curtis Banks Charges.docx'},
+  ]},
+ ]},
+ {id:'cash',name:'Cash Portals',icon:'💰',color:'#059669',subs:[
+  {id:'cash-ins',name:'Insignis (VP Approved)',av:'IS',color:'#059669',docs:[
+   {n:'Insignis Adviser Brochure.pdf',p:'Client Ideas/Cash Portals/Insignis (VP Approved)/Insignis Adviser Brochure.pdf'},
+   {n:'Insignis Client Brochure.pdf',p:'Client Ideas/Cash Portals/Insignis (VP Approved)/Insignis Client Brochure.pdf'},
+   {n:'Insignis Cash Summary.pdf',p:'Client Ideas/Cash Portals/Insignis (VP Approved)/Insignis-Cash-Summary-1.pdf'},
+  ]},
+  {id:'cash-qu',name:'Quilter Cash Hub (VP Approved)',av:'QC',color:'#1d4ed8',docs:[
+   {n:'Quilter Cash Hub - Customer Brochure.pdf',p:'Client Ideas/Cash Portals/Quilter (VP Approved)/Quilter Cash Hub Customer Brochure.pdf'},
+   {n:'Quilter Cash Hub - Summary.pdf',p:'Client Ideas/Cash Portals/Quilter (VP Approved)/Quilter-CashHub-Summary.pdf'},
+   {n:'Latest Cash Hub Savings Rates.xlsx',p:'Client Ideas/Cash Portals/Quilter (VP Approved)/Latest Cash Hub Savings Rates.xlsx'},
+   {n:'Quilter Info.docx',p:'Client Ideas/Cash Portals/Quilter (VP Approved)/Quilter Info.docx'},
+  ]},
+  {id:'cash-fl',name:'Flagstone',av:'FL',color:'#374151',docs:[
+   {n:'Flagstone Info.docx',p:'Client Ideas/Cash Portals/Flagstone/Flagstone info.docx'},
+  ]},
+  {id:'cash-rc',name:'Research & Compliance',av:'RC',color:'#059669',docs:[
+   {n:'Cash Management Services - VP Compliance Considerations Feb 26.docx',p:'Client Ideas/Cash Portals/Cash Management Services - VP  Compliance Considerations Feb 26.docx'},
+   {n:'ValidPath Cash Management Due Diligence (09.2025).pdf',p:'Client Ideas/Cash Portals/ValidPath-Cash-Management-Due-Diligence-09.2025.pdf'},
+   {n:'PS Cash Platform Research March 2026.docx',p:'Client Ideas/Cash Portals/Pocock_Sanders_Cash_Platform_Research_March_2026_5.docx'},
+   {n:'Cash Management Suitability Report Template.docx',p:'Client Ideas/Cash Portals/Template-Cash-Management-Suitability-Report (1).docx'},
+   {n:'Platform Interest Rates 03.26.xlsx',p:'Client Ideas/Platform Interest Rates 03.26.xlsx'},
+  ]},
+ ]},
+ {id:'bp',name:'Business Protection',icon:'🏢',color:'#ea580c',docs:[
+  {n:'L&G Business Protection & CIC.pdf',p:'Client Ideas/Business Protection/L&G Business protection & CIC.pdf'},
+  {n:'L&G Business Protection.pdf',p:'Client Ideas/Business Protection/L&G Business protection.pdf'},
+  {n:'L&G Data Capture Form.pdf',p:'Client Ideas/Business Protection/L&G Data Capture Form.pdf'},
+  {n:'L&G Price Beater.pdf',p:'Client Ideas/Business Protection/L&G Price Beater.pdf'},
+  {n:'L&G Relevant Life - Policy Summary.pdf',p:'Client Ideas/Business Protection/L&G Relevant Life - Policy Summary.pdf'},
+ ]},
+ {id:'prot',name:'Protection Planning',icon:'🛡',color:'#b45309',subs:[
+  {id:'prot-lg',name:'L&G',av:'LG',color:'#1d4ed8',docs:[
+   {n:'Life Insurance - Policy Booklet.pdf',p:'Client Ideas/Protection Planning/L&G/Life Insurance - Policy Booklet.pdf'},
+   {n:'Protection - Trust Deed.pdf',p:'Client Ideas/Protection Planning/L&G/Protection - Trust Deed.pdf'},
+  ]},
+  {id:'prot-zur',name:'Zurich',av:'ZU',color:'#502D7F',docs:[
+   {n:'Zurich - BMI Tables.pdf',p:'Client Ideas/Protection Planning/Zurich/Zurich - BMI Tables.pdf'},
+   {n:'Zurich - Large Case Underwriting Service.pdf',p:'Client Ideas/Protection Planning/Zurich/Zurich - Large case underwriting service.pdf'},
+   {n:'Zurich - Non Medical Limits.pdf',p:'Client Ideas/Protection Planning/Zurich/Zurich - Non Medical Limits -.pdf'},
+  ]},
+ ]},
+ {id:'invest',name:'Investment Sectors',icon:'📈',color:'#475569',docs:[
+  {n:'Core Investment Sectors - 10 Year (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Core Investment Sectors - 10 Year.pdf'},
+  {n:'Core Investment Sectors - Long Scan (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Core Investment Sectors - Long Scan.pdf'},
+  {n:'Core Investment Sectors - Start of Data (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Core Investment Sectors - Start of Data.pdf'},
+  {n:'Core Investment Sectors - Year to Date (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Core Investment Sectors - Year to Date.pdf'},
+  {n:'Equity Alternatives - 10 Year (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Equity Alternatives - 10 Year.pdf'},
+  {n:'Equity Alternatives - Long Scan (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Equity Alternatives - Long Scan.pdf'},
+  {n:'Equity Alternatives - Start of Data (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Equity Alternatives - Start of Data.pdf'},
+  {n:'Equity Alternatives - Year to Date (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Equity Alternatives - Year to Date.pdf'},
+  {n:'Equity Sectors - 10 Year (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Equity Sectors - 10 Year.pdf'},
+  {n:'Equity Sectors - Long Scan (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Equity Sectors - Long Scan.pdf'},
+  {n:'Equity Sectors - Start of Data (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Equity Sectors - Start of Data.pdf'},
+  {n:'Equity Sectors - Year to Date (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Equity Sectors - Year to Date.pdf'},
+  {n:'Non Core Equity Sectors - 10 Year (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Non Core Equity Sectors - 10 Year.pdf'},
+  {n:'Non Core Equity Sectors - Long Scan (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Non Core Equity Sectors - Long Scan.pdf'},
+  {n:'Non Core Equity Sectors - Start of Data (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Non Core Equity Sectors - Start of Data.pdf'},
+  {n:'Non Core Equity Sectors - Year to Date (Oct 2025).pdf',p:'Client Ideas/Investment Sectors/10.2025/Non Core Equity Sectors - Year to Date.pdf'},
+ ]},
+ {id:'newclient',name:'New Client Pack',icon:'📋',color:'#0369a1',docs:[
+  {n:'1. PS Terms of Business V1.pdf',p:'Client Ideas/New Client Pack/xxxx Pocock Sanders Information/1. PS Terms of Business V1.pdf'},
+  {n:'2. PS RCA Agreement to Gather Information.pdf',p:'Client Ideas/New Client Pack/xxxx Pocock Sanders Information/2. PS RCA Agreement to gather information.pdf'},
+  {n:'3. PS Guide to Investing.pdf',p:'Client Ideas/New Client Pack/xxxx Pocock Sanders Information/3. PS Guide to Investing.pdf'},
+  {n:'4. Pocock Sanders Newsletter March 26.pdf',p:'Client Ideas/New Client Pack/xxxx Pocock Sanders Information/4. Pocock Sanders Newsletter March 26.pdf'},
+  {n:'PS RCA 1.1.pdf',p:'Client Ideas/New Client Pack/PS RCA 1.1.pdf'},
+  {n:'PS RCA MP V1.0.pdf',p:'Client Ideas/New Client Pack/PS RCA MP V1.0.pdf'},
+  {n:'Editable ATR and ESGQ.pdf',p:'Client Ideas/New Client Pack/Editable ATR and ESGQ.pdf'},
+  {n:'PS Guide to Investing.pdf',p:'Client Ideas/New Client Pack/PS Guide to Investing.pdf'},
+  {n:'xxx PS Fee Calculator V2.xlsx',p:'Client Ideas/New Client Pack/xxx PS Fee Calculator V2.xlsx'},
+ ]},
+ {id:'trust',name:'Trust Registration',icon:'🔏',color:'#7c3aed',isNew:true,docs:[
+  {n:'BPS - A Guide for Registering Your Trust.pdf',p:'4. Trust Registration/BPS_A-guide-for-registering-your-trust.pdf'},
+ ]},
+ {id:'psref',name:'PS Reference',icon:'🏢',color:'#374151',docs:[
+  {n:'Things to Remember When Markets Fall.docx',p:'Client Ideas/Things to Remember When Markets Fall PS.docx'},
+ ]},
+ {id:'cip',name:'CIP',icon:'CIP',color:'#0369a1',docs:[
+  {n:'BPS CIP Process Document 25.03.pdf',p:'CIP/.BPS CIP Process Document 25.03.pdf'},
+  {n:'Investment Solutions Matrix V1.1.25.03.pdf',p:'CIP/Investment Solutions Matrix V1.1.25.03.pdf'},
+  {n:'PS Guide to Building our CIP V1.25.03.docx',p:'CIP/PS Guide to building our CIP V1.25.03.docx'},
+  {n:'Cost Comparison V3.xlsx',p:'CIP/2. Investment Solutions/A. Core Strategy/1. FEI Portfolios/Cost Comparison V3.xlsx'},
+  {n:'PS FEI Portfolio - Fund List and ISIN.xlsx',p:'CIP/2. Investment Solutions/A. Core Strategy/1. FEI Portfolios/PS FEI Portfolio - Fund List & ISIN.xlsx'},
+ ]},
+];
+
+
+// ── BACKGROUND ─────────────────────────────────────────────────────
+// hero-bg removed
+
+// ── SVG ICONS ───────────────────────────────────────────────────────
+const TILE_IMGS={"ann": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=500&h=280&q=75", "bp": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=500&h=280&q=75", "cash": "https://images.unsplash.com/photo-1601597111158-2fceff292cdc?auto=format&fit=crop&w=500&h=280&q=75", "iht": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=500&h=280&q=75", "invest": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=500&h=280&q=75", "newclient": "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=500&h=280&q=75", "newprod": "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=500&h=280&q=75", "prot": "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=500&h=280&q=75", "prov": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=500&h=280&q=75", "psref": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&h=280&q=75", "trust": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=500&h=280&q=75"};
+const SVGS={
+'ann':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="8 14 10.5 17 16 12"/></svg>',
+'bp':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/><polyline points="9 12 11 14 15 10"/></svg>',
+'cash':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><circle cx="12" cy="14" r="2"/></svg>',
+'iht':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="20" width="20" height="2" rx="1"/><rect x="2" y="2" width="20" height="2" rx="1"/><rect x="4" y="4" width="3" height="16" rx="1"/><rect x="10.5" y="4" width="3" height="16" rx="1"/><rect x="17" y="4" width="3" height="16" rx="1"/></svg>',
+'invest':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
+'newclient':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+'newprod':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+'prot':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7"/></svg>',
+'prov':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+'psref':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>',
+'trust':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>',
+};
+function tileIcon(id,col){
+  const s=SVGS[id];if(!s)return '';
+  return `<div class="tile-icon-wrap" style="background:${col}15"><div style="width:26px;height:26px;color:${col}">${s}</div></div>`;
+}
+
+// ── HELPERS ─────────────────────────────────────────────────────────
+function cD(n){return n.docs?n.docs.length:(n.subs||[]).reduce((a,c)=>a+cD(c),0)}
+function tot(){return L.reduce((a,c)=>a+cD(c),0)}
+function find(id,ns){for(const n of(ns||[])){if(n.id===id)return n;const f=find(id,n.subs||[]);if(f)return f}return null}
+function aD(){const r=[];function w(n){if(n.docs)n.docs.forEach(d=>r.push({d,node:n}));(n.subs||[]).forEach(w)}L.forEach(w);return r}
+function ext(nm){const m=nm.match(/\.([a-z0-9]+)$/i);return m?m[1].toUpperCase():'FILE'}
+function extSt(nm){const e=ext(nm);
+  if(e==='PDF')return'background:#fee2e2;color:#991b1b';
+  if(e==='XLSX'||e==='XLS')return'background:#dcfce7;color:#166534';
+  if(e==='DOCX'||e==='DOC')return'background:#dbeafe;color:#1e40af';
+  return'background:#f1f5f9;color:#475569'}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
+function enc(p){return p.split('/').map(encodeURIComponent).join('/')}
+
+// ── CUSTOM DOCS ──────────────────────────────────────────────────────
+function loadCustomDocs(){
+  try{const c=JSON.parse(localStorage.getItem('ps-custom-docs')||'{}');
+    Object.entries(c).forEach(([id,docs])=>{const node=find(id,L);
+      if(node&&docs){if(!node.docs)node.docs=[];docs.forEach(d=>{if(!node.docs.find(x=>x.n===d.n))node.docs.push(d);})}})
+  }catch{}
+}
+function saveCustomDoc(nid,name,path){
+  let c={};try{c=JSON.parse(localStorage.getItem('ps-custom-docs')||'{}')}catch{}
+  if(!c[nid])c[nid]=[];if(!c[nid].find(x=>x.n===name))c[nid].push({n:name,p:path});
+  localStorage.setItem('ps-custom-docs',JSON.stringify(c));
+}
+function deleteCustomDoc(nid,name){
+  let c={};try{c=JSON.parse(localStorage.getItem('ps-custom-docs')||'{}')}catch{}
+  if(c[nid])c[nid]=c[nid].filter(x=>x.n!==name);
+  localStorage.setItem('ps-custom-docs',JSON.stringify(c));
+  const node=find(nid,L);if(node&&node.docs)node.docs=node.docs.filter(d=>d.n!==name);
+}
+function isCustom(nid,name){try{const c=JSON.parse(localStorage.getItem('ps-custom-docs')||'{}');return!!(c[nid]&&c[nid].find(x=>x.n===name))}catch{return false}}
+
+// ── FILE & DOWNLOAD ──────────────────────────────────────────────────
+const URL_MAP={
+  'Prudential DGT Discount Calculator.url':'https://www.mandg.com/pru/tools-calculators/dgt/index.html',
+  'Pru Guaranteed Income Calculator.url':'https://www.mandg.com/pru/tools-calculators/guaranteed-income/index.html',
+  'SL Quick Quote Tool.url':'https://www.standardlife.co.uk/adviser',
+  'Guaranteed Income Calculator.url':'https://www.mandg.com/pru/tools-calculators/guaranteed-income/index.html',
+};
+function fileUrl(path){
+  // Decode first in case enc() was applied to a URL
+  const dec=path.split('/').map(s=>{try{return decodeURIComponent(s)}catch{return s}}).join('/');
+  // Check if it's a web URL (before or after decoding)
+  if(path.startsWith('http')||dec.startsWith('http')) return dec;
+  const hd=window.location.href.replace(/\/[^\/]*$/,'');
+  const cf=decodeURIComponent(hd.split('/').pop());
+  const clean=dec.startsWith(cf+'/')?dec.slice(cf.length+1):dec;
+  return hd+'/'+clean.split('/').map(encodeURIComponent).join('/');
+}
+function downloadFile(path,name){
+  // .url shortcut files - look up actual URL or open file
+  if(path.toLowerCase().endsWith('.url')){
+    const fname=path.split('/').pop();
+    const dest=URL_MAP[fname]||URL_MAP[name];
+    if(dest){window.open(dest,'_blank');return;}
+  }
+  const url=fileUrl(path);
+  if(url.startsWith('http')){window.open(url,'_blank');return;}
+  const a=document.createElement('a');a.href=url;
+  a.target='_blank';
+  a.download=name||path.split('/').map(s=>{try{return decodeURIComponent(s)}catch{return s}}).pop();
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{try{document.body.removeChild(a)}catch{}},500);
+}
+
+// ── NAV ──────────────────────────────────────────────────────────────
+let NAV=[];
+function cur(){return NAV.length?find(NAV[NAV.length-1],L):null}
+function goHome(){NAV=[];$('srch').value='';$('hero-srch').value='';showHero();render();}
+function navTo(i){NAV=NAV.slice(0,i+1);hideHero();render();}
+function nav(id){NAV.push(id);hideHero();render();}
+function back(){NAV.pop();if(!NAV.length)showHero();render();}
+function showHero(){$('hero-wrap').style.display='';$('inner-nav').style.display='none';}
+function hideHero(){$('hero-wrap').style.display='none';$('inner-nav').style.display='flex';}
+function $(id){return document.getElementById(id)}
+
+// ── RENDER ───────────────────────────────────────────────────────────
+function render(){
+  rBc();rPill();
+  const q=($('hero-srch').value||$('srch').value).trim();
+  if(q.length>4){hideHero();rSearch(q);return;}
+  const node=cur();
+  if(!node){rHome();return;}
+  if(node.docs){rDocs(node);return;}
+  if(node.subs){rSubs(node);return;}
+  rHome();
+}
+function rPill(){
+  const t=tot()+' docs';
+  $('hero-pill').textContent=t;
+  if($('nav-pill-inner'))$('nav-pill-inner').textContent=t;
+}
+function rBc(){
+  const bc=$('bc');if(!NAV.length){bc.style.display='none';return;}
+  bc.style.display='flex';
+  let h='<a onclick="goHome()">Home</a>';
+  NAV.forEach((id,i)=>{
+    const n=find(id,L);if(!n)return;
+    h+='<span class="bc-sep">›</span>';
+    if(i<NAV.length-1)h+=`<a onclick="navTo(${i})">${esc(n.name)}</a>`;
+    else h+=`<span style="color:var(--text);font-weight:600">${esc(n.name)}</span>`;
+  });
+  bc.innerHTML=h;
+}
+function rHome(){
+  var sorted=[].concat(L).sort(function(a,b){return a.name.localeCompare(b.name);});
+  var EM={"ann":"📅","bp":"🛡","cash":"💳","iht":"🏛","invest":"📈","newclient":"🤝","newprod":"⭐","prot":"☂","prov":"📖","psref":"📌","trust":"✅","cip":"💼"};
+  var DS={"ann":"Fixed term and guaranteed income annuity options.","bp":"Key person, shareholder and relevant life cover.","cash":"Approved cash portal platforms and savings tools.","iht":"BPR, DGT, whole of life and estate planning tools.","invest":"Sector-specific investment literature and guides.","newclient":"Onboarding packs and new client documentation.","newprod":"Latest product additions and new provider launches.","prot":"Personal and family protection planning literature.","prov":"Bonds, ISAs, pensions and platform guides by provider.","psref":"Internal reference materials and market guides.","trust":"HMRC trust registration guidance and forms.","cip":"Client Investment Proposal process documents and research."};
+  var h='<p class="section-intro">Choose a section to see the documents in it.</p>';
+  h+='<div class="grid g3">';
+  for(var i=0;i<sorted.length;i++){
+    var c=sorted[i];var dc=cD(c);
+    var em=EM[c.id]||"\uD83D\uDCC1";
+    var ds=DS[c.id]||"";
+    var ct=(c.subs?c.subs.length+" sections":dc+" documents")+" \u2014 open \u2192";
+    h+='<div class="tile" onclick="nav(\''+(c.id)+'\')">'
+      +'<div class="tile-top">'
+      +'<div class="tile-icon-sq">'+em+'</div>'
+      +'<div class="tile-text">'
+      +'<div class="tile-name">'+esc(c.name)+'</div>'
+      +'<div class="tile-desc">'+esc(ds)+'</div>'
+      +'</div></div>'
+      +'<button class="tile-cta"><span>'+ct+'</span></button>'
+      +'</div>';
+  }
+  h+='</div>';
+  var m=document.getElementById("main");
+  if(m)m.innerHTML=h;
+}
+function rSubs(node){
+  var n=node.subs.length;
+  var cols=n<=2?"g2":n<=4?"g4":"g3";
+  var h='<div class="back-bar"><button class="back-btn" onclick="back()">&#8592; Back</button>'
+       +'<div class="page-title">'+esc(node.name)+'</div></div>';
+  h+='<div class="grid '+cols+'">' ;
+  for(var i=0;i<node.subs.length;i++){
+    var s=node.subs[i];
+    var dc=cD(s);
+    var av=s.av||s.name.slice(0,2).toUpperCase();
+    var col=s.color||node.color||"#502D7F";
+    var ct=(s.subs?s.subs.length+" providers":dc+" documents")+" — open";
+    h+='<div class="tile" onclick="nav(\''+(s.id)+'\')">'
+      +'<div class="tile-icon-sq" style="background:'+col+'20;font-size:16px;font-weight:700;color:'+col+'">'+av+'</div>'
+      +'<div style="flex:1"><div class="tile-name">'+esc(s.name)+'</div>'
+      +'<div class="tile-desc">'+dc+' document'+(dc!==1?"s":"")+'</div></div>'
+      +'<button class="tile-cta"><span>'+ct+'</span><span style="font-size:15px">→</span></button>'
+      +'</div>';
+  }
+  h+='</div>';
+  var m=document.getElementById("main");
+  if(m)m.innerHTML=h;
+}
+function docRow(n,p){
+  const lu=enc(p),safe=n.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  return `<div class="doc-row">
+    <span class="ext-b" style="${extSt(n)}">${ext(n)}</span>
+    <div class="doc-name">${esc(n)}</div>
+    <div class="doc-acts"><button onclick="downloadFile('${lu}','${safe}')" class="btn-dl">⬇ Download</button></div>
+  </div>`;
+}
+function docRowS(n,p,cat){
+  const lu=enc(p),safe=n.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  return `<div class="doc-row">
+    <span class="ext-b" style="${extSt(n)}">${ext(n)}</span>
+    <div class="doc-name">${esc(n)}<div class="sr-cat">${esc(cat)}</div></div>
+    <div class="doc-acts"><button onclick="downloadFile('${lu}','${safe}')" class="btn-dl">⬇ Download</button></div>
+  </div>`;
+}
+function rDocs(node){
+  const col=node.color||'#502D7F',av=node.av||node.name.slice(0,2).toUpperCase(),dc=node.docs.length;
+  window._sP=node.docs.map(d=>enc(d.p));window._sN=node.docs.map(d=>d.n);
+  let h=`<div class="back-bar">
+    <button class="back-btn" onclick="back()">← Back</button>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="tile-av" style="background:${col};width:42px;height:42px;border-radius:6px;font-size:12px">${av}</div>
+      <div><div class="page-title">${esc(node.name)}</div><div class="page-count">${dc} document${dc!==1?'s':''}</div></div>
+    </div>
+  </div>
+  <div class="toolbar">
+    <button class="btn-sm btn-green" onclick="dlAllSection()">⬇ Download all ${dc} document${dc!==1?'s':''}</button>
+  </div>
+  <div class="doc-list">`;
+  node.docs.forEach(d=>{h+=docRow(d.n,d.p);});
+  h+='</div>';
+  $('main').innerHTML=h;
+}
+function dlAllSection(){dlAll(window._sP||[],window._sN||[]);}
+function dlAll(paths,names){
+  $('dl-title').textContent='Download all documents';
+  $('dl-sub').textContent='Click ⬇ on each file — Edge requires one click per file';
+  const list=$('dl-list');list.innerHTML='';
+  paths.forEach((p,i)=>{
+    const name=names[i]||decodeURIComponent(p).split('/').pop();
+    const safe=name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const row=document.createElement('div');row.className='dl-item';
+    row.innerHTML=`<span class="ext-b" style="${extSt(name)}">${ext(name)}</span>
+      <span class="dl-item-name">${esc(name)}</span>
+      <button onclick="downloadFile('${p}','${safe}')" class="dl-item-btn">⬇</button>`;
+    list.appendChild(row);
+  });
+  $('dl-overlay').style.display='flex';
+}
+function closeDl(){$('dl-overlay').style.display='none';}
+function rSearch(q){
+  const all=aD(),ql=q.toLowerCase();
+  const res=all.filter(({d,node})=>d.n.toLowerCase().includes(ql)||node.name.toLowerCase().includes(ql));
+  let h=`<div class="toolbar" style="margin-bottom:16px">
+    <span style="font-size:13px;color:var(--muted)"><strong>${res.length}</strong> result${res.length!==1?'s':''} for "<strong>${esc(q)}</strong>"</span>
+    <button onclick="$('srch').value='';$('hero-srch').value='';showHero();render()" class="btn-sm btn-grey" style="margin-left:auto">✕ Clear</button>
+  </div><div class="doc-list">`;
+  if(!res.length)h+='<p style="color:var(--muted);padding:16px 0;font-size:14px">No documents found.</p>';
+  res.forEach(({d,node})=>{h+=docRowS(d.n,d.p,node.name);});
+  h+='</div>';
+  $('main').innerHTML=h;
+}
+let _st;
+function onS(){clearTimeout(_st);_st=setTimeout(()=>{
+  $('hero-srch').value=$('srch').value;
+  const v=$('srch').value.trim();
+  if(v.length>4){hideHero();render();}else if(!v){showHero();render();}else{if(!NAV.length)showHero();render();}
+},180);}
+function onHS(){clearTimeout(_st);_st=setTimeout(()=>{
+  $('srch').value=$('hero-srch').value;
+  const v=$('hero-srch').value.trim();
+  if(v.length>4){hideHero();render();}else if(!v){showHero();render();}else render();
+},180);}
+
+// ── ADMIN ─────────────────────────────────────────────────────────
+const PW='PSIFA2026';let adminOk=false;
+function openAdmin(){$('pw-overlay').style.display='flex';setTimeout(()=>$('pw-inp').focus(),80);}
+function closePw(){$('pw-overlay').style.display='none';$('pw-inp').value='';$('pw-err').textContent='';}
+function checkPw(){
+  if($('pw-inp').value===PW){adminOk=true;closePw();renderAdmin();}
+  else{$('pw-err').textContent='Incorrect password.';$('pw-inp').value='';$('pw-inp').focus();}
+}
+function renderAdmin(){
+  if($('adm-panel'))$('adm-panel').remove();
+  const p=document.createElement('div');p.id='adm-panel';p.className='admin-panel';
+  const cats=flatCats().map(c=>`<option value="${esc(c.id)}">${esc(c.label)}</option>`).join('');
+  p.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div><div style="font-size:16px;font-weight:800;color:var(--ps)">⚙ Manage Documents</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:3px">Add or remove documents from any category</div></div>
+    <button onclick="$('adm-panel').remove()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:22px;line-height:1">✕</button>
+  </div>
+  <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Add new document</div>
+  <select id="adm-cat" class="inp"><option value="">— Select category —</option>${cats}</select>
+  <input id="adm-name" class="inp" placeholder="Filename (e.g. NewDoc.pdf)"/>
+  <input id="adm-path" class="inp" placeholder="Path inside Client Ideas (e.g. IHT Planning/BPR/NewDoc.pdf)"/>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+    <button onclick="adminAdd()" class="btn-sm btn-green">Add document</button>
+    <span id="adm-msg" style="font-size:12px"></span>
+  </div>
+  <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Delete added documents</div>
+  <div id="adm-del"></div>`;
+  $('main').prepend(p);rDel();p.scrollIntoView({behavior:'smooth'});
+}
+function flatCats(){
+  const r=[];
+  function walk(ns,pre){(ns||[]).forEach(n=>{if(n.docs)r.push({id:n.id,label:(pre?pre+' › ':'')+n.name});if(n.subs)walk(n.subs,(pre?pre+' › ':'')+n.name);})}
+  walk(L,'');return r;
+}
+function adminAdd(){
+  const cat=$('adm-cat').value,name=($('adm-name').value||'').trim(),path=($('adm-path').value||'').trim();
+  const msg=$('adm-msg');
+  if(!cat||!name){msg.style.color='#dc2626';msg.textContent='Select a category and enter a filename.';return;}
+  const node=find(cat,L);if(!node)return;
+  if(!node.docs)node.docs=[];
+  if(node.docs.find(d=>d.n===name)){msg.style.color='#dc2626';msg.textContent='Already exists.';return;}
+  node.docs.push({n:name,p:path||name});
+  saveCustomDoc(cat,name,path||name);
+  $('adm-name').value='';$('adm-path').value='';
+  msg.style.color='var(--green)';msg.textContent='✓ Added!';
+  setTimeout(()=>msg.textContent='',2500);
+  rDel();render();
+}
+function rDel(){
+  const el=$('adm-del');if(!el)return;
+  let c={};try{c=JSON.parse(localStorage.getItem('ps-custom-docs')||'{}')}catch{}
+  const entries=Object.entries(c).flatMap(([id,docs])=>(docs||[]).map(d=>({id,name:d.n})));
+  if(!entries.length){el.innerHTML='<p style="font-size:12px;color:var(--muted);padding:6px 0">No custom documents added yet.</p>';return;}
+  el.innerHTML='<div class="del-list">'+entries.map(e=>`<div class="del-row">
+    <span title="${esc(e.name)}">${esc(e.name)}</span>
+    <span style="font-size:11px;color:var(--muted);flex-shrink:0">${esc(e.id)}</span>
+    <button onclick="delDoc('${esc(e.id).replace(/'/g,"\\'")}','${esc(e.name).replace(/'/g,"\\'")}');rDel()" style="background:#fee2e2;border:none;color:#dc2626;border-radius:4px;padding:3px 10px;cursor:pointer;font-size:11px;font-weight:700;flex-shrink:0">Delete</button>
+  </div>`).join('')+'</div>';
+}
+function delDoc(nid,name){deleteCustomDoc(nid,name);render();if($('adm-del'))rDel();}
+
+
+
+// ── PSI DOCUMENT INDEX ─────────────────────────────────────────────
+// Build flat searchable index from L array
+let PSI_DOCS = [];
+function psiRebuildIndex() {
+  PSI_DOCS = [];
+  function walk(node, cats) {
+    if (node.docs) {
+      node.docs.forEach(d => PSI_DOCS.push({
+        n: d.n, p: d.p,
+        cat: cats.join(' › ')
+      }));
+    }
+    (node.subs || []).forEach(s => walk(s, [...cats, s.name]));
+  }
+  L.forEach(c => walk(c, [c.name]));
+}
+
+function psiSearchDocs(query) {
+  if (!query || query.trim().length < 2) return [];
+  const raw = query.toLowerCase().trim();
+  const terms = raw.split(/\s+/).filter(t => t.length >= 2);
+
+  // Score each document
+  const scored = PSI_DOCS.map(d => {
+    const hay = (d.n + ' ' + d.cat + ' ' + d.p).toLowerCase();
+    let score = 0;
+
+    // Exact substring match on filename (highest value)
+    if (d.n.toLowerCase().includes(raw)) score += 20;
+
+    // Each term match
+    terms.forEach(t => {
+      if (d.n.toLowerCase().includes(t)) score += 10;  // in filename
+      if (d.cat.toLowerCase().includes(t)) score += 4;  // in category
+      if (d.p.toLowerCase().includes(t)) score += 2;   // in path
+    });
+
+    // Acronym match - e.g. "RCA" matches "Retirement Choices Analysis"
+    if (terms.length === 1 && terms[0].length >= 2) {
+      const words = d.n.replace(/[^a-zA-Z ]/g,' ').split(/\s+/).filter(Boolean);
+      const initials = words.map(w => w[0]).join('').toLowerCase();
+      if (initials.includes(raw)) score += 15;
+      // Also try first letters of each word matching the acronym
+      const acronymMatch = raw.split('').every((ch, i) => words[i] && words[i][0].toLowerCase() === ch);
+      if (acronymMatch) score += 18;
+    }
+
+    return { doc: d, score };
+  });
+
+  return scored
+    .filter(s => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 10)
+    .map(s => s.doc);
+}
+
+// ── ChatPSI (disabled) ─────────────────────────────────────────────
+// The ChatPSI assistant is intentionally disabled in this build. A live
+// assistant would require an Anthropic API key, and a key placed in a
+// client-side file is readable by anyone the file is shared with. To
+// re-enable ChatPSI safely, route requests through a server-side proxy
+// that holds the key; do not embed a key here.
+const PSI_SYS = `You are ChatPSI, the AI assistant embedded inside the Pocock Sanders Document Library.
+
+MOST IMPORTANT RULE - READ THIS FIRST:
+When the user message contains [LIBRARY MATCHES FOUND], you MUST output every matching document using this format:
+[DOC:path/to/file.pdf|Document Name]
+
+This creates a download button. You MUST do this. Never say "I don't have access" - you DO have access via the library matches provided.
+
+Example: If you see [DOC:Client Ideas/New Client Pack/PS RCA 1.1.pdf|PS RCA 1.1.pdf], output exactly:
+[DOC:Client Ideas/New Client Pack/PS RCA 1.1.pdf|PS RCA 1.1.pdf]
+
+RULES:
+1. User types keyword/acronym (RCA, BPR, Foresight etc) = output ALL matching DOC tags immediately
+2. User asks for a document = output the DOC tag, do not describe where to find it
+3. General financial question = answer briefly in plain English
+4. Never say "I don't have access to the library" - you always have access via the matches
+5. Never tell the user to go look elsewhere - give them the document directly
+6. Keep answers short and direct
+
+ABOUT POCOCK SANDERS:
+- IFA firm in Berkhamsted, Hertfordshire
+- FCA Number: 530924
+- Compliance: ValidPath Financial Limited
+- Library has 290+ documents across: IHT Planning, Annuities, Provider Literature, Cash Portals, Business Protection, Protection Planning, Investment Sectors, New Client Pack (incl RCA forms, Terms of Business, ATR), Trust Registration, PS Reference, CIP`;
+let psiHistory = [];
+let psiOpen = false;
+
+function togglePSI() {
+  // ChatPSI is disabled in this build; the panel is not rendered.
+  return;
+}
+
+function psiAddMsg(role, text) {
+  const msgs = document.getElementById('psi-msgs');
+  const div = document.createElement('div');
+  div.className = 'psi-msg ' + role;
+  const label = document.createElement('div');
+  label.className = 'psi-label';
+
+  if (role === 'user') {
+    label.innerHTML = 'You <button class="psi-edit-btn" onclick="psiEditMsg(this)">Edit</button>';
+  } else {
+    label.textContent = 'ChatPSI';
+  }
+
+  const bubble = document.createElement('div');
+  bubble.className = 'psi-bubble';
+  bubble.setAttribute('data-original', text);
+  bubble.innerHTML = psiMarkdown(text);
+  div.appendChild(label);
+  div.appendChild(bubble);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function psiEditMsg(btn) {
+  const msgDiv = btn.closest('.psi-msg');
+  const bubble = msgDiv.querySelector('.psi-bubble');
+  const original = bubble.getAttribute('data-original') || bubble.textContent;
+
+  // Replace bubble with edit input
+  const wrap = document.createElement('div');
+  wrap.className = 'psi-edit-wrap';
+  const safeVal = original.replace(/"/g,'&quot;');
+  wrap.innerHTML = '<input class="psi-edit-inp" value="' + safeVal + '"/>'
+    + '<button class="psi-edit-save" onclick="psiSaveEdit(this)">Resend</button>'
+    + '<button class="psi-edit-cancel" onclick="psiCancelEdit(this)">Cancel</button>';
+
+  bubble.style.display = 'none';
+  btn.style.display = 'none';
+  msgDiv.appendChild(wrap);
+  wrap.querySelector('.psi-edit-inp').focus();
+}
+
+function psiCancelEdit(btn) {
+  const msgDiv = btn.closest('.psi-msg');
+  msgDiv.querySelector('.psi-edit-wrap').remove();
+  msgDiv.querySelector('.psi-bubble').style.display = '';
+  msgDiv.querySelector('.psi-edit-btn').style.display = '';
+}
+
+function psiSaveEdit(btn) {
+  const msgDiv = btn.closest('.psi-msg');
+  const newText = msgDiv.querySelector('.psi-edit-inp').value.trim();
+  if (!newText) return;
+
+  // Find index of this message in psiHistory
+  const allUserMsgs = [...document.querySelectorAll('.psi-msg.user')];
+  const msgIdx = allUserMsgs.indexOf(msgDiv);
+
+  // Remove all messages from this point onward in DOM
+  const msgs = document.getElementById('psi-msgs');
+  const allMsgs = [...msgs.children];
+  // Find the position of this msgDiv
+  const domIdx = allMsgs.indexOf(msgDiv);
+  for (let i = allMsgs.length - 1; i >= domIdx; i--) {
+    allMsgs[i].remove();
+  }
+
+  // Trim history to before this message (2 entries per exchange: user + ai)
+  // msgIdx = index of this user turn in psiHistory (every other entry)
+  psiHistory = psiHistory.slice(0, msgIdx * 2);
+
+  // Resend with new text
+  document.getElementById('psi-input').value = newText;
+  psiSend();
+}
+
+function psiMarkdown(text) {
+  // Render [DOC:path|name] as download buttons
+  text = text.replace(/\[DOC:([^\|]+)\|([^\]]+)\]/g, function(match, path, name) {
+    const encoded = path.split('/').map(encodeURIComponent).join('/');
+    const safeName = name.replace(/'/g, "\\'");
+    const safeEnc = encoded.replace(/'/g, '%27');
+    return '<div style="margin:6px 0"><button onclick="downloadFile(\''+safeEnc+'\',\''+safeName+'\''
+      + ')" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:6px">'
+      + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'
+      + '⬇ ' + name + '</div>';
+  });
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`(.+?)`/g, '<code style="background:#f0eaf9;padding:1px 5px;border-radius:3px;font-family:monospace">$1</code>')
+    .replace(/^#{1,3} (.+)$/gm, '<strong style="color:var(--ps)">$1</strong>')
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n- /g, '<br>\u2022 ')
+    .replace(/\n/g, '<br>');
+}
+
+function psiTyping(msg) {
+  const msgs = document.getElementById('psi-msgs');
+  const div = document.createElement('div');
+  div.className = 'psi-msg ai';
+  div.id = 'psi-typing';
+  const label = msg ? '<span style="font-size:10px;color:var(--muted);margin-left:4px">'+msg+'</span>' : '';
+  div.innerHTML = '<div class="psi-label">ChatPSI '+label+'</div><div class="psi-bubble"><div class="psi-typing"><div class="psi-dot"></div><div class="psi-dot"></div><div class="psi-dot"></div></div></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function psiAsk(q) {
+  document.getElementById('psi-input').value = q;
+  psiSend();
+}
+
+async function psiSend() {
+  // ChatPSI is disabled in this build (no embedded API key). The chat UI
+  // is not rendered, so this is unreachable; kept only as a safe stub.
+  return;
+}
+
+
+loadCustomDocs();render();psiRebuildIndex();
+
+
+
+
+
+
+</script>
+</body>
+</html>

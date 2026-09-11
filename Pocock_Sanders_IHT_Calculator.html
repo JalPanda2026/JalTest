@@ -587,7 +587,7 @@ footer a{color:var(--purple)}
             <div class="iw"><span class="pfx">&pound;</span><input type="text" inputmode="decimal" id="p_gifts" value="0" class="money"></div></div>
           <div class="field"><label>Charitable legacy in will (to registered charity)</label>
             <div class="iw"><span class="pfx">&pound;</span><input type="text" inputmode="decimal" id="p_charity" value="0" class="money"></div>
-            <div class="fnote">Funded from the assets above, not added to them. Where this is 10% or more of the taxable estate (after the Nil Rate Bands), the rate on the remainder falls from 40% to 36%. The calculator applies this test automatically.</div></div>
+            <div class="fnote">Funded from the assets above, not added to them. Where this is 10% or more of the taxable estate before the charitable gift (that is, after the Nil Rate Bands), the rate on the remainder falls from 40% to 36%. The calculator applies this test automatically.</div></div>
           <div class="al info" style="margin-top:10px;font-size:14px">
             <strong>Point to note &mdash; gift taper relief is not modelled.</strong>
             The gifts figure above reduces the available Nil Rate Band in full. This calculator does <b>not</b> model
@@ -1278,7 +1278,7 @@ footer a{color:var(--purple)}
 </div>
 
 <footer>Pocock Sanders Independent Financial Advisers &nbsp;&bull;&nbsp; 111&ndash;113 High Street, Berkhamsted HP4 2JF &nbsp;&bull;&nbsp; <a href="https://pococksanders.co.uk">pococksanders.co.uk</a> &nbsp;&bull;&nbsp; 01442 876333 &nbsp;&bull;&nbsp; FCA 530924
-  <div style="margin-top:6px;opacity:.6">Calculator version 16.24 &nbsp;&bull;&nbsp; Last updated 11 September 2026</div>
+  <div style="margin-top:6px;opacity:.6">Calculator version 16.25 &nbsp;&bull;&nbsp; Last updated 11 September 2026</div>
 </footer>
 
 <!-- TAPER INFO MODAL -->
@@ -1479,9 +1479,9 @@ function chRows(rowId, cellId, noteRowId, noteId, lblId, lbl40, lbl36, calc, cha
   var noteRowEl=gi(noteRowId); if(noteRowEl) noteRowEl.style.display=has?'table-row':'none';
   if(has){
     var pct=calc.baseline>0?(charity/calc.baseline*100):0;
-    setText(noteId, calc.qualifies
-      ? 'Charitable legacy is '+pct.toFixed(1)+'% of the taxable estate (10% or more), so the reduced 36% rate applies.'
-      : 'Charitable legacy is '+pct.toFixed(1)+'% of the taxable estate (below 10%), so the standard 40% rate applies.');
+    setText(noteId, 'Charitable legacy ('+fmt(charity)+') is '+pct.toFixed(1)+'% of the '+fmt(calc.baseline)+' taxable estate before the charitable gift'+(calc.qualifies
+      ? ' (10% or more), so the reduced 36% rate applies.'
+      : ' (below 10%), so the standard 40% rate applies.'));
   }
 }
 

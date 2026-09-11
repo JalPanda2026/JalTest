@@ -585,6 +585,24 @@ footer a{color:var(--purple)}
         <div class="disc-body">
           <div class="field"><label>Gifts within the last 7 years (non-exempt)</label>
             <div class="iw"><span class="pfx">&pound;</span><input type="text" inputmode="decimal" id="p_gifts" value="0" class="money"></div></div>
+          <div class="al info" style="margin-top:10px;font-size:14px">
+            <strong>Point to note &mdash; gifts and charity are simplified here.</strong>
+            The figure above reduces the available Nil Rate Band in full. This calculator does <b>not</b> model
+            <b>taper relief</b> on gifts, nor the <b>reduced 36% charitable rate</b>. Both must be checked separately.
+            <div style="margin-top:8px">Taper relief reduces only the <i>tax</i> on a gift, and only where the gift exceeds the Nil Rate Band:</div>
+            <table style="width:100%;border-collapse:collapse;margin-top:6px;font-size:13.5px">
+              <tr style="text-align:left;border-bottom:1px solid var(--purple-mid)">
+                <th style="padding:4px 8px;font-weight:800">Years between gift and death</th>
+                <th style="padding:4px 8px;font-weight:800">Reduction in tax</th></tr>
+              <tr><td style="padding:3px 8px">0 to 3 years</td><td style="padding:3px 8px">0%</td></tr>
+              <tr><td style="padding:3px 8px">3 to 4 years</td><td style="padding:3px 8px">20%</td></tr>
+              <tr><td style="padding:3px 8px">4 to 5 years</td><td style="padding:3px 8px">40%</td></tr>
+              <tr><td style="padding:3px 8px">5 to 6 years</td><td style="padding:3px 8px">60%</td></tr>
+              <tr><td style="padding:3px 8px">6 to 7 years</td><td style="padding:3px 8px">80%</td></tr>
+              <tr><td style="padding:3px 8px">7+ years</td><td style="padding:3px 8px">No tax &mdash; the gift falls outside the estate</td></tr>
+            </table>
+            <div style="margin-top:8px"><b>36% charitable rate:</b> where 10% or more of the net estate (after exemptions and the Nil Rate Band) is left to charity, the Inheritance Tax rate on the remainder falls from 40% to 36%. This calculator always applies 40%.</div>
+          </div>
           <div class="field"><label>Existing DGT / trust investments</label>
             <div class="iw"><span class="pfx">&pound;</span><input type="text" inputmode="decimal" id="p_edgt" value="0" class="money"></div></div>
             <div class="fnote">Already settled into trust in a previous arrangement. We assume existing Trust and BPR holdings have completed their qualifying period (2 years for BPR, 7 years for gifts into trust). BPR/APR holdings are relieved 100% up to a combined &pound;2.5m-per-person allowance and 50% above it (an effective 20% rate); DGT/trust gifts are relieved separately in full. Use "Existing BPR-qualifying investments" under Assets above for BPR holdings &mdash; there's no separate BPR field here, to avoid double-counting the same money.</div>
@@ -1214,6 +1232,8 @@ footer a{color:var(--purple)}
       <li>This report is based on <b>current Inheritance Tax legislation as at the date of preparation</b>. Tax rules, rates, reliefs and thresholds (including the Nil Rate Band, Residential Nil Rate Band, Business Relief, and the treatment of pensions from 6 April 2027) are set by HM Government and <b>may change in the future</b>, including with retrospective effect.</li>
       <li>Levels and bases of taxation, and reliefs from taxation, can change at any time and are not guaranteed. Their value depends on individual circumstances.</li>
       <li>The figures shown are <b>estimates for illustration purposes only</b>, based on the information and assumptions provided, and should not be relied upon as a precise calculation of any actual tax liability.</li>
+      <li><b>Taper relief on lifetime gifts is not modelled.</b> Any gifts figure entered reduces the available Nil Rate Band in full. The calculator does not apply the 20%, 40%, 60% or 80% taper reduction that lowers the tax on gifts made three to seven years before death where those gifts exceed the Nil Rate Band, and it does not apply annual or other gift exemptions. The Inheritance Tax position on any gifts must be calculated separately.</li>
+      <li><b>The reduced 36% charitable rate is not modelled.</b> Where 10% or more of the net estate is left to charity, the Inheritance Tax rate on the remainder reduces from 40% to 36%. This calculator applies 40% throughout, so an estate with a significant charitable legacy may show a higher figure than the true liability.</li>
       <li><b>Discounted Gift Trust</b> discount rates are indicative, subject to medical underwriting, and not guaranteed until confirmed by the provider.</li>
       <li><b>Business Relief (BPR)</b>-qualifying investments carry investment risk, including potential loss of capital, are not capital guaranteed, and relief is only secured once the qualifying holding period (normally two years) has been met and the shares are still held on death. Relief can also be withdrawn if the underlying company ceases to qualify. Since 6 April 2026, 100% relief on combined BPR/APR-qualifying property (including any existing holdings) is capped at &pound;2.5 million per person, with 50% relief (an effective 20% Inheritance Tax rate) on any value above that. <b>AIM-listed shares</b> are treated differently from wider Business Relief holdings and do not draw on the &pound;2.5 million allowance: since 6 April 2026 they attract 50% relief only (an effective 20% Inheritance Tax rate) regardless of amount, rather than the 100% relief previously available.</li>
       <li>Assets placed into trust (including a Discounted Gift Trust) are <b>no longer accessible</b> to the settlor(s) beyond any retained rights specifically reserved, and trust legislation itself is subject to change.</li>
@@ -1245,7 +1265,7 @@ footer a{color:var(--purple)}
 </div>
 
 <footer>Pocock Sanders Independent Financial Advisers &nbsp;&bull;&nbsp; 111&ndash;113 High Street, Berkhamsted HP4 2JF &nbsp;&bull;&nbsp; <a href="https://pococksanders.co.uk">pococksanders.co.uk</a> &nbsp;&bull;&nbsp; 01442 876333 &nbsp;&bull;&nbsp; FCA 530924
-  <div style="margin-top:6px;opacity:.6">Calculator version 16.22 &nbsp;&bull;&nbsp; Last updated 3 September 2026</div>
+  <div style="margin-top:6px;opacity:.6">Calculator version 16.23 &nbsp;&bull;&nbsp; Last updated 11 September 2026</div>
 </footer>
 
 <!-- TAPER INFO MODAL -->

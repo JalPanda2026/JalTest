@@ -587,7 +587,7 @@ footer a{color:var(--purple)}
             <div class="iw"><span class="pfx">&pound;</span><input type="text" inputmode="decimal" id="p_gifts" value="0" class="money"></div></div>
           <div class="field"><label>Charitable legacy in will (to registered charity)</label>
             <div class="iw"><span class="pfx">&pound;</span><input type="text" inputmode="decimal" id="p_charity" value="0" class="money"></div>
-            <div class="fnote">Funded from the assets above, not added to them. Where this is 10% or more of the taxable estate before the charitable gift (that is, after the Nil Rate Bands), the rate on the remainder falls from 40% to 36%. The calculator applies this test automatically.</div></div>
+            <div class="fnote">Funded from the assets above, not added to them. Where this is 10% or more of the baseline (the estate after the standard Nil Rate Band, but before the Residence Nil Rate Band and the charitable gift), the rate on the remainder falls from 40% to 36%. The calculator applies this test automatically.</div></div>
           <div class="al info" style="margin-top:10px;font-size:14px">
             <strong>Point to note &mdash; gift taper relief is not modelled.</strong>
             The gifts figure above reduces the available Nil Rate Band in full. This calculator does <b>not</b> model
@@ -604,7 +604,7 @@ footer a{color:var(--purple)}
               <tr><td style="padding:3px 8px">6 to 7 years</td><td style="padding:3px 8px">80%</td></tr>
               <tr><td style="padding:3px 8px">7+ years</td><td style="padding:3px 8px">No tax &mdash; the gift falls outside the estate</td></tr>
             </table>
-            <div style="margin-top:8px"><b>36% charitable rate:</b> where 10% or more of the taxable estate (after the Nil Rate Bands, before the charitable gift) is left to charity, the rate on the remainder falls from 40% to 36%. Enter the charitable legacy above and the calculator applies the test and the correct rate.</div>
+            <div style="margin-top:8px"><b>36% charitable rate:</b> where 10% or more of the baseline (the estate after the standard Nil Rate Band, but before the Residence Nil Rate Band and the charitable gift) is left to charity, the rate on the remainder falls from 40% to 36%. Enter the charitable legacy above and the calculator applies the test and the correct rate.</div>
           </div>
           <div class="field"><label>Existing DGT / trust investments</label>
             <div class="iw"><span class="pfx">&pound;</span><input type="text" inputmode="decimal" id="p_edgt" value="0" class="money"></div></div>
@@ -1246,7 +1246,7 @@ footer a{color:var(--purple)}
       <li>Levels and bases of taxation, and reliefs from taxation, can change at any time and are not guaranteed. Their value depends on individual circumstances.</li>
       <li>The figures shown are <b>estimates for illustration purposes only</b>, based on the information and assumptions provided, and should not be relied upon as a precise calculation of any actual tax liability.</li>
       <li><b>Taper relief on lifetime gifts is not modelled.</b> Any gifts figure entered reduces the available Nil Rate Band in full. The calculator does not apply the 20%, 40%, 60% or 80% taper reduction that lowers the tax on gifts made three to seven years before death where those gifts exceed the Nil Rate Band, and it does not apply annual or other gift exemptions. The Inheritance Tax position on any gifts must be calculated separately.</li>
-      <li><b>The reduced 36% charitable rate is applied automatically.</b> Where the charitable legacy entered is 10% or more of the taxable estate (the estate after the available nil-rate bands, before the charitable gift), the rate on the remaining taxable estate reduces from 40% to 36%. This is modelled as a single estate component and assumes the legacy is funded from the assets entered. Estates with more than one component (for example jointly owned property or settled property passing separately, each with its own 10% test) must be checked separately, as the merger of components to pass a single test is not modelled here.</li>
+      <li><b>The reduced 36% charitable rate is applied automatically.</b> Where the charitable legacy entered is 10% or more of the baseline amount, the rate on the remaining taxable estate reduces from 40% to 36%. The baseline amount is the estate after reliefs and the standard nil-rate band, but the residence nil-rate band is excluded from it; the residence nil-rate band still reduces the estate the 36% is charged on. This is modelled as a single estate component and assumes the legacy is funded from the assets entered. Estates with more than one component (for example jointly owned property or settled property passing separately, each with its own 10% test) must be checked separately, as the merger of components to pass a single test is not modelled here.</li>
       <li><b>Discounted Gift Trust</b> discount rates are indicative, subject to medical underwriting, and not guaranteed until confirmed by the provider.</li>
       <li><b>Business Relief (BPR)</b>-qualifying investments carry investment risk, including potential loss of capital, are not capital guaranteed, and relief is only secured once the qualifying holding period (normally two years) has been met and the shares are still held on death. Relief can also be withdrawn if the underlying company ceases to qualify. Since 6 April 2026, 100% relief on combined BPR/APR-qualifying property (including any existing holdings) is capped at &pound;2.5 million per person, with 50% relief (an effective 20% Inheritance Tax rate) on any value above that. <b>AIM-listed shares</b> are treated differently from wider Business Relief holdings and do not draw on the &pound;2.5 million allowance: since 6 April 2026 they attract 50% relief only (an effective 20% Inheritance Tax rate) regardless of amount, rather than the 100% relief previously available.</li>
       <li>Assets placed into trust (including a Discounted Gift Trust) are <b>no longer accessible</b> to the settlor(s) beyond any retained rights specifically reserved, and trust legislation itself is subject to change.</li>
@@ -1278,7 +1278,7 @@ footer a{color:var(--purple)}
 </div>
 
 <footer>Pocock Sanders Independent Financial Advisers &nbsp;&bull;&nbsp; 111&ndash;113 High Street, Berkhamsted HP4 2JF &nbsp;&bull;&nbsp; <a href="https://pococksanders.co.uk">pococksanders.co.uk</a> &nbsp;&bull;&nbsp; 01442 876333 &nbsp;&bull;&nbsp; FCA 530924
-  <div style="margin-top:6px;opacity:.6">Calculator version 16.25 &nbsp;&bull;&nbsp; Last updated 11 September 2026</div>
+  <div style="margin-top:6px;opacity:.6">Calculator version 16.26 &nbsp;&bull;&nbsp; Last updated 11 September 2026</div>
 </footer>
 
 <!-- TAPER INFO MODAL -->
@@ -1454,17 +1454,20 @@ function calcRNRB(taperBase, nc, on){
   var taper=Math.max(0,(taperBase-2000000)/2);
   return {av:Math.max(0,mx-taper), taper:taper, tapered:taperBase>2000000, max:mx, base:taperBase};
 }
-// Charity: where 10% or more of the "baseline amount" (the taxable estate after the
-// nil-rate bands, before the charitable gift itself) is left to a registered charity, the
-// rate on the remaining taxable estate falls from 40% to 36% (s1A IHTA 1984). The charitable
-// gift is itself exempt, so it also comes out of what is taxed. Modelled here as a single
-// component estate, which is the common case for this tool.
+// Charity (s1A / Sch 1A IHTA 1984): the 36% reduced rate applies where the charitable gift is
+// 10% or more of the "baseline amount". Two distinct figures are involved:
+//   • Baseline amount (the 10% test denominator) = estate after reliefs and the standard
+//     nil-rate band, but the RESIDENCE nil-rate band is EXCLUDED from it. RNRB does not
+//     reduce the baseline.
+//   • The 36% (or 40%) rate is then charged on the actual taxable estate, which DOES deduct
+//     the residence nil-rate band and the exempt charitable gift.
+// Modelled here as a single component estate, which is the common case for this tool.
 function calcIHT(net,nrb,rnrb,gifts,charity){
   charity=charity||0;
   var eff=Math.max(0,nrb-gifts);
-  var baseline=Math.max(0,net-eff-rnrb);          // taxable estate BEFORE the charitable gift — the 10% test base
+  var baseline=Math.max(0,net-eff);               // 10% test base: after standard NRB, RNRB excluded
   var qualifies=charity>0 && baseline>0 && charity>=0.10*baseline;
-  var liable=Math.max(0,baseline-charity);        // taxable estate after the exempt charitable gift
+  var liable=Math.max(0,net-eff-rnrb-charity);    // amount actually taxed: after RNRB and the exempt gift
   var rate=qualifies?0.36:0.40;
   return {liable:liable, iht:liable*rate, rate:rate, qualifies:qualifies, baseline:baseline, charity:charity};
 }
@@ -1479,9 +1482,9 @@ function chRows(rowId, cellId, noteRowId, noteId, lblId, lbl40, lbl36, calc, cha
   var noteRowEl=gi(noteRowId); if(noteRowEl) noteRowEl.style.display=has?'table-row':'none';
   if(has){
     var pct=calc.baseline>0?(charity/calc.baseline*100):0;
-    setText(noteId, 'Charitable legacy ('+fmt(charity)+') is '+pct.toFixed(1)+'% of the '+fmt(calc.baseline)+' taxable estate before the charitable gift'+(calc.qualifies
-      ? ' (10% or more), so the reduced 36% rate applies.'
-      : ' (below 10%), so the standard 40% rate applies.'));
+    setText(noteId, 'Charitable legacy ('+fmt(charity)+') is '+pct.toFixed(1)+'% of the '+fmt(calc.baseline)+' baseline for the 10% test (the estate after the standard Nil Rate Band, but before the Residence Nil Rate Band and the charitable gift)'+(calc.qualifies
+      ? ', which is 10% or more, so the reduced 36% rate applies.'
+      : ', which is below 10%, so the standard 40% rate applies.'));
   }
 }
 

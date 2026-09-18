@@ -391,7 +391,9 @@ footer a{color:var(--purple)}
   </div>
   <div id="strip_sol1"></div><div class="ledbar"><div class="lt">Inheritance Tax position statement</div>
       <label class="rettog"><input type="checkbox" class="retChk" checked onchange="toggleRetained(this.checked)"> Show retained lifetime access</label></div><div id="led_sol1"></div><div id="notes_sol1"></div>
-  <div class="pane-nav"><button class="nbtn back" onclick="goStep(3)">&lsaquo; From April 2027</button><button class="nbtn next" onclick="goStep(5)">Explore Solution 2 &rsaquo;</button></div>
+  <div class="pane-nav"><button class="nbtn back" onclick="goStep(3)">&lsaquo; From April 2027</button>
+    <button class="nbtn back" style="margin-left:auto" onclick="selectSolution('dgt');goStep(6)">Summary &amp; Report</button>
+    <button class="nbtn next" style="margin-left:10px" onclick="setCombine(true);goStep(5)">Proceed to Solution 2 &rsaquo;</button></div>
 </section>
 
 <!-- PANEL 5: SOLUTION 2 -->
@@ -423,7 +425,8 @@ footer a{color:var(--purple)}
   </div>
   <div id="strip_sol2"></div><div class="ledbar"><div class="lt">Inheritance Tax position statement</div>
       <label class="rettog"><input type="checkbox" class="retChk" checked onchange="toggleRetained(this.checked)"> Show retained lifetime access</label></div><div id="led_sol2"></div><div id="notes_sol2"></div>
-  <div class="pane-nav"><button class="nbtn back" onclick="goStep(4)">&lsaquo; Solution 1</button><button class="nbtn next" onclick="goStep(6)">See the summary &amp; report &rsaquo;</button></div>
+  <div class="pane-nav"><button class="nbtn back" onclick="goStep(4)">&lsaquo; Solution 1</button>
+    <button class="nbtn next" style="margin-left:auto" onclick="selectSolution('port');goStep(6)">Summary &amp; Report &rsaquo;</button></div>
 </section>
 
 <!-- PANEL 6: SUMMARY -->
@@ -604,7 +607,7 @@ footer a{color:var(--purple)}
 </main>
 
 <footer>Pocock Sanders Independent Financial Advisers &nbsp;&bull;&nbsp; 111&ndash;113 High Street, Berkhamsted HP4 2JF &nbsp;&bull;&nbsp; <a href="https://pococksanders.co.uk">pococksanders.co.uk</a> &nbsp;&bull;&nbsp; 01442 876333 &nbsp;&bull;&nbsp; FCA 530924
-  <div style="margin-top:6px;opacity:.6">Calculator version 17.4 &nbsp;&bull;&nbsp; Word &amp; PDF downloads, engine unchanged</div>
+  <div style="margin-top:6px;opacity:.6">Calculator version 17.5 &nbsp;&bull;&nbsp; Word &amp; PDF downloads, engine unchanged</div>
 </footer>
 
 <!-- TAPER INFO MODAL -->

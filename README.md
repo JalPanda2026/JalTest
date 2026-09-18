@@ -5,7 +5,14 @@ branded, printable planning report. It runs entirely in the browser. There is no
 build step and no external data storage, so nothing that is typed into it leaves the machine
 it is opened on.
 
-Current file: `Pocock_Sanders_IHT_Calculator.html` (calculator version 16.22).
+Current file: `Pocock_Sanders_IHT_Calculator.html` (calculator version 17.0).
+
+Version 17.0 is a presentation redesign only. The calculation engine, tax rules and
+thresholds are unchanged from 16.x and the full test suite still passes. The interface now
+follows the tabbed layout of the PS Wealth Report Editor, and each scenario is shown as a
+single top-to-bottom "IHT position" statement in the style of the firm's Excel model rather
+than the previous card-and-ribbon wizard. Client dates of birth are no longer collected;
+only client names are entered, as age is not used anywhere in the calculation.
 
 ## Running it
 
@@ -19,10 +26,10 @@ unaffected.
 
 ## What it covers
 
-The tool works through six steps: the estate and asset position, the Inheritance Tax position
+The tool works through six tabs: the client details and estate, the Inheritance Tax position
 under current rules, the position from 6 April 2027 once unused pension funds come inside the
 estate, a Discounted Gift Trust with Whole of Life cover, a Business Relief or AIM ISA
-investment, and a final client report.
+investment, and a summary with the printable client report.
 
 Rules and thresholds reflected in the current version:
 

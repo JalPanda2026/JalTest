@@ -5,14 +5,18 @@ branded, printable planning report. It runs entirely in the browser. There is no
 build step and no external data storage, so nothing that is typed into it leaves the machine
 it is opened on.
 
-Current file: `Pocock_Sanders_IHT_Calculator.html` (calculator version 17.0).
+Current file: `Pocock_Sanders_IHT_Calculator.html` (calculator version 17.1).
 
-Version 17.0 is a presentation redesign only. The calculation engine, tax rules and
-thresholds are unchanged from 16.x and the full test suite still passes. The interface now
+Version 17.x is a presentation redesign only. The calculation engine, tax rules and
+thresholds are unchanged from 16.x and the full test suite still passes. The interface
 follows the tabbed layout of the PS Wealth Report Editor, and each scenario is shown as a
-single top-to-bottom "IHT position" statement in the style of the firm's Excel model rather
-than the previous card-and-ribbon wizard. Client dates of birth are no longer collected;
-only client names are entered, as age is not used anywhere in the calculation.
+single flat, Excel-style "IHT position" ledger: section headings down the page (gross
+assets, assets outside the taxable estate, allowances, Inheritance Tax), a Value column and
+a Retained Lifetime Access column that can be toggled on or off, and a flat headline strip
+rather than the previous card-and-ribbon wizard. The Nil Rate Band, Residence Nil Rate Band
+taper, charitable-rate and planning notes from 16.x are retained beneath each ledger. Client
+dates of birth are no longer collected; only client names are entered, as age is not used
+anywhere in the calculation.
 
 ## Running it
 

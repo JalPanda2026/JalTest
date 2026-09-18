@@ -21,12 +21,13 @@ anywhere in the calculation.
 ## Running it
 
 Open the file in a browser. Double-clicking it works, as does opening it from a network share.
-Chrome or Edge are preferred, because the report is produced through the browser print dialogue
-and those two give the most reliable "Save as PDF" output.
+Chrome or Edge are preferred.
 
-The only external dependency is a web font pulled from `fonts.cdnfonts.com`. Without a network
-connection the tool still works and falls back to Calibri, so the figures and the report are
-unaffected.
+The report can be downloaded directly from the Summary tab (or the header) as a **Word (.doc)**
+file and as a **PDF**. Both are produced in the browser, offline, with no print dialogue. The PDF
+is a six-page A4 document with fixed margins and a page break on each section boundary; the Word
+file opens and edits in Word and paginates the same way. The PDF library is embedded in the file,
+so there are no external dependencies and nothing that is typed into the tool leaves the machine.
 
 ## What it covers
 
